@@ -1,18 +1,24 @@
 import discord
 import os
+import asyncio
 from secrets import token
 from discord.ext import commands
+from itertools import cycle
 
 prefix = ['n.', 'N.', 'n. ', 'N. ']
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=prefix, case_insensitive=True, intents=intents)
 client.remove_command('help')
+status = [f'n.help | {"{:,}".format(len(client.users))} users']
 
 
 @client.event
 async def on_ready():
     print('NOVA is online')
-    await client.change_presence(activity=discord.Game('n.help'))
+    total_members = 0
+    for guild in client.guilds:
+        total_members += guild.member_count
+    await client.change_presence(activity=discord.Game(name=f'n.help | {"{:,}".format(total_members)} users'))
 
 
 errorurl = 'https://media.discordapp.net/attachments/726475732569555014/745738546660245664/vsPV_ipxVKfJKE3xJGvJZeX' \
@@ -71,10 +77,10 @@ async def on_command_error(ctx, error):
         embed.add_field(name='Error:', value=f'```py\n{error}```')
         embed.set_thumbnail(url=errorurl)
         await ctx.send(embed=embed)
+        raise error
 
 
 for filename in os.listdir('cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
-
 client.run(token)

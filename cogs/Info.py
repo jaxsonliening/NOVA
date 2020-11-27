@@ -1,5 +1,46 @@
 import discord
+import platform
 from discord.ext import commands
+
+
+def lines_of_code():
+    """
+    I did not write this code.
+    This code was taken off of a tag in discord.gg/dpy owned by Dutchy#6127
+    I don't know if this is licensed
+    but alas
+    :return:
+    """
+    import pathlib
+    p = pathlib.Path('./')
+    cm = cr = fn = cl = ls = fc = 0
+    for f in p.rglob('*.py'):
+        if str(f).startswith("venv"):
+            continue
+        fc += 1
+        with f.open() as of:
+            for l in of.readlines():
+                l = l.strip()
+                if l.startswith('class'):
+                    cl += 1
+                if l.startswith('def'):
+                    fn += 1
+                if l.startswith('async def'):
+                    cr += 1
+                if '#' in l:
+                    cm += 1
+                ls += 1
+    return {
+        "comments": cm,
+        "coroutine": cr,
+        "functions": fn,
+        "classes": cl,
+        "lines": ls,
+        "files": fc
+    }
+
+
+lines = lines_of_code()
 
 
 class Info(commands.Cog):
@@ -106,31 +147,67 @@ class Info(commands.Cog):
     async def about(self, ctx):
         """Get basic information about NOVA"""
         pre = ctx.prefix
-        guild = ctx.guild
+        emojis = len(self.client.emojis)
+        y = '{:,}'.format(emojis)
+        total_members = 0
+        total_unique = len(self.client.users)
+        unique = '{:,}'.format(total_unique)
+        text = 0
+        voice = 0
+        guilds = 0
+        for guild in self.client.guilds:
+            guilds += 1
+            total_members += guild.member_count
+            for channel in guild.channels:
+                if isinstance(channel, discord.TextChannel):
+                    text += 1
+                elif isinstance(channel, discord.VoiceChannel):
+                    voice += 1
+        members = '{:,}'.format(total_members)
+        channels = text + voice
+        parsed_channels = '{:,}'.format(channels)
         embed = discord.Embed(title='About NOVA', color=0x5643fd, timestamp=ctx.message.created_at,
-                              description=f'My prefix for {guild.name} is ``{pre}``\nDo ``'
+                              description=f'My prefix for {ctx.guild.name} is ``{pre}``\nDo ``'
                                           f'{pre}help`` for a list of commands')
-        embed.set_footer(text=f'Requested by {ctx.message.author}', icon_url=ctx.message.author.avatar_url)
         embed.set_thumbnail(url='https://cdn.discordapp.com/avatars/709922850953494598/f78ed19924e8c95abc30f406d47670d7'
                                 '.png?size=1024')
         embed.set_author(name='Developed by YeetVegetabales#5313',
-                         icon_url='https://cdn.discordapp.com/avatars/5693744'
-                                  '29218603019/a_b6d992c79036b86d1ac49f27093b'
-                                  'c813.gif?size=1024')
+                         icon_url='https://imgur.com/FfnuDFH.png')
         embed.add_field(inline=False, name='Info',
                         value='NOVA is a general purpose discord bot that has tools to help you better moderate your '
                               'server as well as have a little fun')
         embed.add_field(name='Stats',
-                        value=f'**•** ``{len(self.client.guilds)}`` servers with ``{len(self.client.users)}``'
-                              f' total users',
-                        inline=False)
-        embed.add_field(name='Commands', value=f'**•** ``{len(self.client.commands)}`` commands with '
-                                               f'``{len(self.client.cogs)}`` cogs', inline=False)
+                        value=f'**•** ``{guilds}`` servers with ``{members}``'
+                              f' total users (`{unique}` unique)\n'
+                              f'**•** ``{y}`` available emojis\n'
+                              f'**•** ``{parsed_channels}`` channels\n', inline=False)
+        embed.add_field(name='Code', value=f'**•** ``{len(self.client.commands)}`` commands with '
+                                           f'``{len(self.client.cogs)}`` cogs\n'
+                                           f"**•** `{lines.get('lines'):,}` lines of code with "
+                                           f"`{lines.get('files'):,}` "
+                                           f"files\n"
+                                           f"**•** <:python:726515814861242519> `{platform.python_version()}`\n"
+                                           f"**•** <:discordpy:708801596431007845> `{discord.__version__}`"
+
+                        , inline=False)
         embed.add_field(name='Other', value='<:news:730866149109137520> [Discord Server](https://discord.gg/Uqh9NXY)\n'
                                             '<:news:730866149109137520> [Invite Link](https://discor'
                                             'd.com/api/oauth2/authorize?client_id=709922850953494598&permissions=470150'
                                             '214&scope=bot)', inline=True)
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def cogs(self, ctx):
+        """Shows all of NOVA's cogs"""
+        cogs = []
+        for cog in self.client.cogs:
+            cogs.append(
+                f"`{cog}` • {self.client.cogs[cog].__doc__}")
+            # adds cogs and their description to list. if the cog doesnt have a description it will return as "None"
+        await ctx.send(embed=discord.Embed(colour=0x5643fd, title=f"All Cogs ({len(self.client.cogs)})",
+                                           description=f"Do `{ctx.prefix}help <cog>` to show info for any cog!"
+                                                       + "\n\n" + "\n".join(
+                                               cogs)))
 
 
 def setup(client):

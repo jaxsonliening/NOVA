@@ -11,19 +11,6 @@ class Help(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def cogs(self, ctx):
-        """Shows all of NOVA's cogs"""
-        cogs = []
-        for cog in self.client.cogs:
-            cogs.append(
-                f"`{cog}` • {self.client.cogs[cog].__doc__}")
-            # adds cogs and their description to list. if the cog doesnt have a description it will return as "None"
-        await ctx.send(embed=discord.Embed(colour=colour, title=f"All Cogs ({len(self.client.cogs)})",
-                                           description=f"Do `{ctx.prefix}help <cog>` to show info for any cog!"
-                                                       + "\n\n" + "\n".join(
-                                               cogs)))
-
-    @commands.command()
     async def help(self, ctx, *, command=None):
         """Your go to guide for using NOVA!"""
         pre = ctx.prefix
@@ -47,7 +34,7 @@ class Help(commands.Cog):
                     for cmd in cog_object.get_commands():
                         if not cmd.hidden:
                             cmds.append(f"`{cmd.name}`")
-                    k.append(f'➤ **{cog_name}**\n{"**•**".join(sorted(cmds))}\n')
+                    k.append(f'➤ **{cog_name}**\n`n.help {cog_name}`')
                 for wc in self.client.walk_commands():
                     if not wc.cog_name and not wc.hidden:
                         if isinstance(wc, commands.Group):
@@ -62,23 +49,32 @@ class Help(commands.Cog):
                 for thing in final_walk_command_list:
                     format.append(f"`{thing}`")
                 embed = discord.Embed(title=f"{self.client.user.name} Help", color=0x5643fd,
-                                      description=f"<:news:730866149109137520> You can do `{pre}help [category]` for "
+                                      description=f"<:news:730866149109137520>`{pre}help [category]` for "
                                                   f"more "
-                                                  f"info on a category.\n<:news:730866149109137520> You can also do "
+                                                  f"info on a category\n<:news:730866149109137520>"
                                                   f"`{pre} "
-                                                  f"help [command]` for more info on a command.\n\nThanks to "
-                                                  f"♿nizcomix#7532 for help with this command. Find it on "
-                                                  f"GitHub [here.]("
-                                                  f"https://github.com/niztg/CyberTron5000/blob/master/cogs/info.py"
-                                                  f"#L9-L109)"
-                                                  f"\n\n" + "\n".join(k))
-                embed.add_field(name='Like what you see?',  inline=False,
-                                value='<:share:730823872265584680>[Invite NOVA]'
-                                      '(https://discord.com/api/oauth2/authorize?client_id=709922850953494598&permis'
-                                      'sions=1573252215&scope=bot)\n'
-                                      '<:share:730823872265584680>[Join the support server]'
-                                      '(https://discord.gg/Uqh9NXY)\n<:share:730823872265584680>[View the source code]'
-                                      '(https://github.com/YeetVegetabales/NOVA/tree/master/cogs)')
+                                                  f"help [command]` for more info on a command"
+                                                  f"\n\n<:share:730823872265584680>[Invite NOVA]"
+                                      f"(https://discord.com/api/oauth2/authorize?client_id=709922850953494598&permis"
+                                      f"sions=1573252215&scope=bot)\n"
+                                      f"<:share:730823872265584680>[Join the support server]"
+                                      f"(https://discord.gg/Uqh9NXY)\n<:share:730823872265584680>[View the source code]"
+                                      f"(https://github.com/YeetVegetabales/NOVA/tree/master/cogs)")
+                embed.add_field(name='➤ **Fun**', value='`n.help Fun`', inline=True)
+                embed.add_field(name='➤ **Moderation**', value='`n.help Moderation`', inline=True)
+                embed.add_field(name='➤ **Math**', value='`n.help Math`', inline=True)
+                embed.add_field(name='➤ **Games**', value='`n.help Games`', inline=True)
+                embed.add_field(name='➤ **Reddit**', value='`n.help Reddit`', inline=True)
+                embed.add_field(name='➤ **Miscellaneous**', value='`n.help Miscellaneous`', inline=True)
+                embed.add_field(name='➤ **Info**', value='`n.help Info`', inline=True)
+                embed.add_field(name='➤ **Image**', value='`n.help Image`', inline=True)
+                embed.add_field(name='➤ **Help**', value="`n.help`", inline=True)
+                embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/AQCEqCF4Yl_PWAfuA-GReZoDify6--y'
+                                        '4hXOJVkqaDHo/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/7099228509534945'
+                                        '98/f78ed19924e8c95abc30f406d47670d7.png')
+                embed.set_author(name='Developed by YeetVegetabales#5313', icon_url='https://cdn.discordapp.com/attach'
+                                                                                    'ments/710565131167203408/7820137'
+                                                                                    '06296360970/image0.png')
                 await ctx.send(embed=embed)
             elif command in list_of_cogs:
                 i = []

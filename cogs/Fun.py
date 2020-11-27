@@ -1,9 +1,9 @@
-
 import discord
 import aiohttp
 import random
 import asyncio
 import io
+import re
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
 from secrets import *
@@ -184,41 +184,6 @@ class Fun(commands.Cog):
         embed.set_image(url=data)
         embed.set_footer(text='Copyright 2020 Deviljamjar')
         await ctx.send(embed=embed)
-
-    @commands.command()
-    async def trivia(self, ctx, difficulty: str = None):
-        """Test out your knowledge with trivia questions from nizcomix#7532"""
-        difficulty = difficulty or random.choice(['easy', 'medium', 'hard'])
-        try:
-            question = await self.trivia.get_random_question(difficulty)
-        except AiotriviaException:
-            return await ctx.send(embed=discord.Embed(title='That is not a valid sort.',
-                                                      description='Valid sorts are ``easy``, ``medium``, and ``hard``.',
-                                                      color=0xFF0000))
-        answers = question.responses
-        d = difficulty.capitalize()
-        random.shuffle(answers)
-        final_answers = '\n'.join([f"{index}. {value}" for index, value in enumerate(answers, 1)])
-        await ctx.send(embed=discord.Embed(
-            title=f"{question.question}", description=f"\n{final_answers}\n\nQuestion about: **{question.category}"
-                                                      f"**\nDifficulty: **{d}**",
-            color=0x5643fd))
-        answer = answers.index(question.answer) + 1
-        try:
-            while True:
-                msg = await self.client.wait_for('message', timeout=15, check=lambda m: m.author == ctx.message.author)
-                if str(answer) in msg.content:
-                    return await ctx.send(embed=discord.Embed(description=f"{answer} was correct ({question.answer})",
-                                                              color=0x32CD32, title='Correct!'))
-                if str(answer) not in msg.content:
-                    return await ctx.send(embed=discord.Embed(description=f"Unfortunately **{msg.content}** was wrong. "
-                                                                          f"The "
-                                                                          f"correct answer was ``{question.answer}``.",
-                                                              title='Incorrect', color=0xFF0000))
-        except asyncio.TimeoutError:
-            embed = discord.Embed(title='Time expired', color=0xFF0000,
-                                  description=f"The correct answer was {question.answer}")
-            await ctx.send(embed=embed)
 
     @commands.command(name='8ball')
     async def _8ball(self, ctx, *, question):
@@ -431,57 +396,21 @@ class Fun(commands.Cog):
                                 f"**Cloud Coverage:** {js['current']['cloud']}%")
                 await ctx.send(embed=embed)
 
-    @commands.command()
-    async def mastermind(self, ctx):
-        """You have 10 tries to guess a 4 digit code. Can you do it?"""
-        part = random.sample(list(map(str, list(range(9)))), 4)
-        code = [int(x) for x in part]
-        human_code = "".join(str(x) for x in code)
-        print(human_code)
-        embed = discord.Embed(title='Welcome to Mastermind', color=0x5643fd, timestamp=ctx.message.created_at,
-                              description='Mastermind is a logic and guessing game where you have to find a four-digit '
-                                          'code in only five tries. Type out four numbers to begin guessing!\n\n'
-                                          '<:redx:732660210132451369> ``The number you guessed is incorrect``\n'
-                                          '<:ticknull:732660186057015317> ``The number you guessed is in the code, '
-                                          'but not '
-                                          'in the right spot``\n'
-                                          '<:tickgreen:732660186560462958> ``You have the right digit and in the '
-                                          'correct spot``')
-        await ctx.send(embed=embed)
-        i = 0
-        while i < 5:
-            try:
-                result = ""
-                msg = await self.client.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author)
-                r = [int(x) for x in msg.content]
-                if len(msg.content) != 4:
-                    await ctx.send('Please only guess four-digit numbers.')
-                    continue
-                for element in r:
-                    if element in code:
-                        if r.index(element) == code.index(element):
-                            result += "<:tickgreen:732660186560462958>"
-                        else:
-                            result += "<:ticknull:732660186057015317>"
-                    else:
-                        result += "<:redx:732660210132451369>"
-                await ctx.send(result)
-                if r == code:
-                    await ctx.send(f"<a:party:773063086109753365> That's the right code. You win! "
-                                   f"<a:party:773063086109753365>\nYou cracked the code in **{i+1}** tries.")
-                    break
-                i += 1
-            except ValueError:
-                await ctx.send(f'{ctx.message.author.mention}, that is not a valid code! Please try again '
-                               f'with actual numbers.')
-                continue
-            except asyncio.TimeoutError:
-                await ctx.send(f'{ctx.message.author.mention},'
-                               f' you took too long to guess! The correct code was **{human_code}**.')
-                break
+    @commands.command(aliases=["bigemote"])
+    async def bigmote(self, ctx, *emoji: discord.Emoji):
+        """Emotes, but B I G (only works from the bot's cache)"""
+        a = []
+        y = ""
+        for item in emoji:
+            a.append(self.client.get_emoji(item.id))
+        emote = a[0]
+        x = emote.id
+        if emote.animated is True:
+            y += 'gif'
         else:
-            await ctx.send(f"{ctx.message.author.mention}, you ran out of tries! The correct code was "
-                           f"**{human_code}**.")
+            y += 'png'
+        await ctx.send(f"https://cdn.discordapp.com/emojis/{x}.{y}")
+        await ctx.message.delete()
 
 
 def setup(client):

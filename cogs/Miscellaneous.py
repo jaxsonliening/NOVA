@@ -108,6 +108,17 @@ class Miscellaneous(commands.Cog):
                                           "https://steamcommunity.com/profiles/76561199089966378)**")
         await ctx.send(embed=embed)
 
+    @commands.command(aliases=['randomcard'])
+    async def card(self, ctx):
+        deck = []
+        suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+        for x in suits:
+            for y in ranks:
+                card = f"I have chosen the **{y} of {x}**"
+                deck.append(card)
+        await ctx.send(random.choice(deck))
+
 
 def setup(client):
     client.add_cog(Miscellaneous(client))

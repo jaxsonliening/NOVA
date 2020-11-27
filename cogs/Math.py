@@ -1,6 +1,9 @@
 import discord
 import cmath
 import random
+import asyncio
+import numpy as np
+import matplotlib.pyplot as plt
 from discord.ext import commands
 
 
@@ -362,6 +365,124 @@ class Math(commands.Cog):
         embed.add_field(name='Conclusion', value=f'``{kilometers}`` kilometers is equal to ``{miles}`` miles.',
                         inline=False)
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['poly'])
+    async def polynomial(self, ctx, *, coefficients):
+        """Solve polynomials using NOVA"""
+        await ctx.send('**Warning!** This command only works if you state the coefficients of each variable and '
+                       'space them out. (Ex. 1 2 3 for the equation x^2 + 2x + 3 = 0)\n'
+                       '**Also,** make sure your polynomial is equal to zero '
+                       'or else you will not get the right answers.')
+        try:
+            numbers = coefficients.split(' ')
+            newnumbers = []
+            for number in numbers:
+                try:
+                    newnumbers.append(int(number))
+                except ValueError:
+                    await ctx.send("You did not enter a number!")
+            p = np.poly1d(newnumbers)
+            roots = p.roots
+            solutions = '\n'.join([str(root) for root in roots])
+            embed = discord.Embed(title='Polynomial Solved!', color=0x5643fd, timestamp=ctx.message.created_at,
+                                  description='**NOTE:** The numbers above the coefficients are the degrees '
+                                              'of the term.')
+            embed.add_field(name='Polynomial Equation', value=f"```{p} = 0```", inline=False)
+            embed.add_field(name='Roots', value=f"```py\n{solutions}```", inline=False)
+            await ctx.send(embed=embed)
+        except asyncio.TimeoutError:
+            await ctx.send('You never responded, process abandoned.')
+        except ValueError:
+            await ctx.send("You did not enter a number!")
+
+    @commands.command()
+    async def graph(self, ctx):
+        """
+        Graph equations and get a picture in return.
+        **-**For exponents, represent the degree as `x*x`.
+        `x*x*x*x` would be for `x^4`. To add a coefficient,
+        multiply the number by the x expressions. For example
+        `4x^2` would be represented as `(4*x*x)`
+        **-**For division, try to put the division inside of
+        parentheses. For `1/2x^2` you would write `((1/2)*x*x)`
+        **-**Try putting each term in parentheses to make solving easier.
+        Example: `(4*x*x)*(-2*x)` for `4x^2-2x1.`
+        **-**When asked to send your equation in chat, do not write **Y =** or
+        else it will not work as intended.
+        **-**When asked to send your x-range in chat, pick the number that you
+        would like your graph to be scaled to on the x-axis.
+        """
+        await ctx.send('Send your equation in chat below. **Remember to not include `y =`**.\n'
+                       'For further help use `n.help graph` to see a complete guide.')
+        msg = await self.client.wait_for('message', timeout=60, check=lambda g: g.author == ctx.author)
+        f = await ctx.send('Your equation has been recorded, now send your x range below.')
+        part = msg.content
+        cheese = await self.client.wait_for('message', timeout=60, check=lambda u: u.author == ctx.author)
+        x_range = int(cheese.content)
+        k = await ctx.send('Your x range has been recorded, the graph will now be made.')
+        m = await ctx.send('<a:loading:743537226503421973> Loading... <a:loading:743537226503421973>')
+        await asyncio.sleep(2)
+        x = np.array(range(1, x_range))
+        y = eval(part)
+        title = f"{ctx.message.author}'s Graph"
+        label = f"y = {part}"
+        plt.plot(x, y, label=label)
+        plt.grid(alpha=1, linestyle='-')
+        plt.title(title)
+        plt.legend()
+        plt.xlabel('Independent Variable')
+        plt.ylabel('Dependent Variable')
+        plt.savefig("graph.png")
+        plt.close()
+        image = discord.File("graph.png")
+        await ctx.send(file=image)
+        await f.delete()
+        await k.delete()
+        await m.delete()
+
+    @commands.group(invoke_without_command=True, aliases=['pythagoras', 'pyth'])
+    async def pythagorean(self, ctx, a: int = 1, b: int = 1):
+        """Find the hypotenuse of a right triangle."""
+        try:
+            a_squared = a * a
+            b_squared = b * b
+            c_squared = a_squared + b_squared
+            c = cmath.sqrt(c_squared)
+            x = str(c)
+            final = x.strip("(+0j)")
+            embed = discord.Embed(title='Pythagorean Theorem', color=0x5643fd, timestamp=ctx.message.created_at,
+                                  description=f"**Solution:**\na value - `{a}`\nb value - `{b}`\nc value - `{final}`")
+            embed.add_field(name='Steps:', value=f"```{a_squared} + {b_squared} = {c_squared}\n"
+                                                f"(a squared + b squared = c squared)```")
+            embed.set_image(url='https://imgur.com/t8XVeli.jpg')
+            embed.add_field(value='Do `n.pythagorean c` to solve for side b given a hypotenuse and side length.',
+                            name='Other Operations:', inline=False)
+            await ctx.send(embed=embed)
+        except ValueError:
+            await ctx.send("You didn't enter a number!")
+
+    @pythagorean.command()
+    async def c(self, ctx, c: int = 1, a: int = 1):
+        """Find the side length of a right triangle given a side length and hypotenuse."""
+        try:
+            if a > c:
+                return await ctx.send('The side length cannot be larger than the hypotenuse.')
+            else:
+                a_squared = a * a
+                c_squared = c * c
+                b_squared = c_squared - a_squared
+                b = cmath.sqrt(b_squared)
+                x = str(b)
+                final = x.strip("(+0j)")
+                embed = discord.Embed(title='Pythagorean Theorem', color=0x5643fd, timestamp=ctx.message.created_at,
+                                      description=f"**Solution:**\nc value - `{c}`\na value - `{a}`\nb value - "
+                                                  f"`{final}`")
+                embed.add_field(name='Steps:', value=f"```{c_squared} - {a_squared} = {b_squared}\n"
+                                                     f"(c squared - a squared = b squared)```")
+                embed.set_image(url='https://imgur.com/t8XVeli.jpg')
+                await ctx.send(embed=embed)
+        except ValueError:
+            await ctx.send("You didn't enter a number!")
 
 
 def setup(client):

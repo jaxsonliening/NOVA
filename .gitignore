@@ -1,5 +1,9 @@
 /venv
 prefixes.json
+secrets.py
+graph.png
+Procfile
+requirements.txt
 ../secrets.py
 __pycache__/
 .idea/
