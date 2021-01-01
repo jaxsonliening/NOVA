@@ -1,5 +1,8 @@
 import discord
 import platform
+import json
+import os
+import asyncio
 from discord.ext import commands
 
 

@@ -52,7 +52,7 @@ class Help(commands.Cog):
                                       description=f"<:news:730866149109137520>`{pre}help [category]` for "
                                                   f"more "
                                                   f"info on a category\n<:news:730866149109137520>"
-                                                  f"`{pre} "
+                                                  f"`{pre}"
                                                   f"help [command]` for more info on a command"
                                                   f"\n\n<:share:730823872265584680>[Invite NOVA]"
                                       f"(https://discord.com/api/oauth2/authorize?client_id=709922850953494598&permis"

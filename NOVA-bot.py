@@ -58,7 +58,9 @@ async def on_command_error(ctx, error):
         await ctx.send(embed=embed)
 
     if isinstance(error, commands.MissingPermissions):
-        await ctx.send(f"⚠ You are not allowed to use this command. You must have ``{error.missing_perms}`` "
+        y = str(error.missing_perms)
+        x = str(y.strip("['_]"))
+        await ctx.send(f"⚠ You are not allowed to use this command. You must have ``{x}`` "
                        f"permissions in order to do so.")
 
     if isinstance(error, commands.UserNotFound):

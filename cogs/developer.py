@@ -1,6 +1,7 @@
 import ast
 import discord
 import praw
+import random
 
 from discord.ext import commands
 from secrets import *

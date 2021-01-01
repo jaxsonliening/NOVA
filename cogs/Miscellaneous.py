@@ -3,6 +3,7 @@ import random
 import humanize
 import asyncio
 import datetime
+import string
 from discord.ext import commands
 
 
@@ -56,37 +57,6 @@ class Miscellaneous(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(1, 30, commands.BucketType.channel)
-    async def timer(self, ctx, seconds: int = 60):
-        """Set a timer using NOVA"""
-        try:
-            if seconds < 301:
-                le_seconds = list(range(seconds))
-                embed = discord.Embed(color=0x5643fd, title="Discord Stopwatch", description=f'```py\n{seconds}```',
-                                      timestamp=ctx.message.created_at)
-                msg = await ctx.send(embed=embed)
-                for num in le_seconds[::-1]:
-                    embed.description = f'```py\n{num}```'
-                    await msg.edit(embed=embed)
-                    if num != 0:
-                        await asyncio.sleep(1)
-                    continue
-                embed.description = f"Timer Complete\nSuccessfully counted down from **{seconds}**"
-                await msg.edit(embed=embed)
-                await ctx.send(f"<a:a_check:742966013930373151> {ctx.message.author.mention} your timer is complete!")
-                return
-            else:
-                embed = discord.Embed(title='Warning! That number is too large.', color=0xFF0000,
-                                      description='The maximum amount of seconds is 300.',
-                                      timestamp=ctx.message.created_at)
-                embed.set_thumbnail(url='https://imgur.com/uafPEpb.png')
-                await ctx.send(embed=embed)
-        except commands.CommandOnCooldown:
-            embed = discord.Embed(title='This command is on cooldown!', color=0xFF0000,
-                                  description='You must wait 30 seconds before using this command again.')
-            await ctx.send(embed=embed)
-
-    @commands.command()
     async def ping(self, ctx):
         """Calculate bot latency"""
         ping = round(self.client.latency, 5)
@@ -108,16 +78,17 @@ class Miscellaneous(commands.Cog):
                                           "https://steamcommunity.com/profiles/76561199089966378)**")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['randomcard'])
-    async def card(self, ctx):
-        deck = []
-        suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
-        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
-        for x in suits:
-            for y in ranks:
-                card = f"I have chosen the **{y} of {x}**"
-                deck.append(card)
-        await ctx.send(random.choice(deck))
+    @commands.command(aliases=['wordcounter', 'wordcount'])
+    async def words(self, ctx, *, message):
+        """Count how many words are in your document or sentence."""
+        doc = str(message)
+        res = str(sum([i.strip(string.punctuation).isalpha() for i in doc.split()]))
+        final = ""
+        if res == "1":
+            final += "Your message is only **1** word."
+        else:
+            final += f'Your message is **{res}** words long.'
+        await ctx.send(final)
 
 
 def setup(client):

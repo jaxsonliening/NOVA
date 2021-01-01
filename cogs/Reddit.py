@@ -36,8 +36,38 @@ class Reddit(commands.Cog):
         thing.set_footer(text=f'Requested by {ctx.message.author}', icon_url=ctx.message.author.avatar_url)
         message = await ctx.send(embed=thing)
         redditor = self.reddit.redditor(user)
+        week_posts = self.reddit.redditor(user).top("week")
+        posts = self.reddit.redditor(user).top("month")
+        year_posts = self.reddit.redditor(user).top("year")
+        weeks = []
+        months = []
+        years = []
+        upvotes_week = 0
+        for x in week_posts:
+            weeks.append(x.score)
+            upvotes_week += x.score
+        upvotes_month = 0
+        for submission in posts:
+            months.append(submission.score)
+            upvotes_month += submission.score
+        upvotes_year = 0
+        for s in year_posts:
+            years.append(s.score)
+            upvotes_year += s.score
         ts = int(redditor.created_utc)
         name = redditor.name
+        upvote_week = '{:,}'.format(upvotes_week)
+        upvote_month = '{:,}'.format(upvotes_month)
+        upvote_year = '{:,}'.format(upvotes_year)
+        week_num = str(len(weeks))
+        month_num = str(len(months))
+        year_num = str(len(years))
+        if week_num == '100':
+            week_num += '+'
+        if month_num == '100':
+            month_num += '+'
+        if year_num == '100':
+            year_num += '+'
         try:
             embed = discord.Embed(color=0x5643fd, timestamp=ctx.message.created_at,
                                   title=f'Reddit Info  -  u/{redditor.name}', url=f'https://reddit.com/user/{name}/')
@@ -49,12 +79,13 @@ class Reddit(commands.Cog):
             embed.add_field(name='Comment Karma', value=f"{redditor.comment_karma:,}", inline=False)
             embed.add_field(name='Account Created', inline=False, value='{}'.format(
                 datetime.datetime.fromtimestamp(ts).strftime('%B %d, %Y')))
-
+            embed.add_field(name='Upvote Statistics', inline=False,
+                            value=f'Total upvotes in the past week: `{upvote_week}` | `{week_num}` posts\n'
+                                  f'Total upvotes in the past month: `{upvote_month}` | `{month_num}` posts\n'
+                                  f'Total upvotes in the past year: `{upvote_year}` | `{year_num}` posts')
             await message.edit(embed=embed)
-        except Exeption:
-            embed = discord.Embed(title='Error', color=0xFF0000, description='That redditor could not be found.')
-            embed.set_footer(text=f'Error occurred at {ctx.message.created_at}', icon_url=ctx.message.author.avatar_url)
-            await ctx.send(embed=embed)
+        except Exception:
+            await ctx.send('That redditor could not be found.')
 
     @commands.command(aliases=['ms'])
     async def modstats(self, ctx, user=None):

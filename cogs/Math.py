@@ -395,25 +395,13 @@ class Math(commands.Cog):
         except ValueError:
             await ctx.send("You did not enter a number!")
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     async def graph(self, ctx):
         """
-        Graph equations and get a picture in return.
-        **-**For exponents, represent the degree as `x*x`.
-        `x*x*x*x` would be for `x^4`. To add a coefficient,
-        multiply the number by the x expressions. For example
-        `4x^2` would be represented as `(4*x*x)`
-        **-**For division, try to put the division inside of
-        parentheses. For `1/2x^2` you would write `((1/2)*x*x)`
-        **-**Try putting each term in parentheses to make solving easier.
-        Example: `(4*x*x)*(-2*x)` for `4x^2-2x1.`
-        **-**When asked to send your equation in chat, do not write **Y =** or
-        else it will not work as intended.
-        **-**When asked to send your x-range in chat, pick the number that you
-        would like your graph to be scaled to on the x-axis.
+        Graph equations using matplotlib.
         """
         await ctx.send('Send your equation in chat below. **Remember to not include `y =`**.\n'
-                       'For further help use `n.help graph` to see a complete guide.')
+                       'For further help use `n.graph guide` to see a complete guide.')
         msg = await self.client.wait_for('message', timeout=60, check=lambda g: g.author == ctx.author)
         f = await ctx.send('Your equation has been recorded, now send your x range below.')
         part = msg.content
@@ -439,6 +427,22 @@ class Math(commands.Cog):
         await f.delete()
         await k.delete()
         await m.delete()
+
+    @graph.command(aliases=['help'])
+    async def guide(self, ctx):
+        await ctx.send("Graph equations and get a picture in return. "
+                       "\n**-**For exponents, represent the degree as `x*x`. "
+                       "`x*x*x*x` would be for `x^4`. To add a coefficient,"
+                       " multiply the number by the x expressions. For example"
+                       " `4x^2` would be represented as `(4*x*x)` "
+                       "\n**-**For division, try to put the division inside of "
+                       "parentheses. For `1/2x^2` you would write `((1/2)*x*x)` "
+                       "\n**-**Try putting each term in parentheses to make solving easier. "
+                       "Example: `(4*x*x)*(-2*x)` for `4x^2-2x1.` "
+                       "\n**-**When asked to send your equation in chat, do not write **Y =** or "
+                       "else it will not work as intended. "
+                       "\n**-**When asked to send your x-range in chat, pick the number that you "
+                       "would like your graph to be scaled to on the x-axis.")
 
     @commands.group(invoke_without_command=True, aliases=['pythagoras', 'pyth'])
     async def pythagorean(self, ctx, a: int = 1, b: int = 1):
