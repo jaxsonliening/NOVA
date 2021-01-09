@@ -8,146 +8,10 @@ from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
 from secrets import *
 from random import randint, choice, sample
+from big_lists import *
 
 ZALGO_DEFAULT_AMT = 3
 ZALGO_MAX_AMT = 7
-
-ZALGO_PARAMS = {
-    'above': (5, 10),
-    'below': (5, 10),
-    'overlay': (0, 2)
-}
-
-ZALGO_CHARS = {
-    'above': ['\u0300', '\u0301', '\u0302', '\u0303', '\u0304', '\u0305', '\u0306', '\u0307', '\u0308', '\u0309',
-              '\u030A', '\u030B', '\u030C', '\u030D', '\u030E', '\u030F', '\u0310', '\u0311', '\u0312', '\u0313',
-              '\u0314', '\u0315', '\u031A', '\u031B', '\u033D', '\u033E', '\u033F', '\u0340', '\u0341', '\u0342',
-              '\u0343', '\u0344', '\u0346', '\u034A', '\u034B', '\u034C', '\u0350', '\u0351', '\u0352', '\u0357',
-              '\u0358', '\u035B', '\u035D', '\u035E', '\u0360', '\u0361'],
-    'below': ['\u0316', '\u0317', '\u0318', '\u0319', '\u031C', '\u031D', '\u031E', '\u031F', '\u0320', '\u0321',
-              '\u0322', '\u0323', '\u0324', '\u0325', '\u0326', '\u0327', '\u0328', '\u0329', '\u032A', '\u032B',
-              '\u032C', '\u032D', '\u032E', '\u032F', '\u0330', '\u0331', '\u0332', '\u0333', '\u0339', '\u033A',
-              '\u033B', '\u033C', '\u0345', '\u0347', '\u0348', '\u0349', '\u034D', '\u034E', '\u0353', '\u0354',
-              '\u0355', '\u0356', '\u0359', '\u035A', '\u035C', '\u035F', '\u0362'],
-    'overlay': ['\u0334', '\u0335', '\u0336', '\u0337', '\u0338']
-}
-
-dank_links = [
-    "https://cdn.discordapp.com/attachments/669003285625045027/771049182080532490/cumflushed-20201028-0001.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/786099129855246376/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/786098839421321226/video2.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/786098838934257724/video1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/786098838539730944/video0.mp4",
-    "https://cdn.discordapp.com/attachments/296056831514509312/785956008022769664/c.mp4",
-    "https://cdn.discordapp.com/attachments/296056831514509312/785895491384246302/video0-111.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/785778976647544872/video0_79_1.mp4",
-    "https://cdn.discordapp.com/attachments/666504348636938240/785541556404092968/9acf2f17233e2f3d79e26dc4202ed70a.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/785135513908543488/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/785093364697137233/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/785008173495877643/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/785007753008513024/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/784660759895998494/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/784623705270517770/video0_24.mov",
-    "https://cdn.discordapp.com/attachments/738969720983912498/779579680172146739/videoplayback_14.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/784221811629490226/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/784150651759362048/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/784150592129073252/video0.mp4",
-    "https://cdn.discordapp.com/attachments/738969720983912498/783754806765944842/video0-1-1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/783570434150498354/unintelligable_japanese_th"
-    "en_bonk.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/783566850118254622/RUFFLES.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/783546455994269756/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/783546215454343178/video0.mp4",
-    "https://cdn.discordapp.com/attachments/479240786119098388/781970687543345183/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/782739440102932510/redditsave.com-shes_right-mza35vao"
-    "96261-480.mp4",
-    "https://cdn.discordapp.com/attachments/479240786119098388/781970687543345183/video0.mov",
-    "https://cdn.discordapp.com/attachments/604701560580341771/782022180459511858/Another_Death_In_Collective.mp4",
-    "https://cdn.discordapp.com/attachments/722706822737428510/749803513013338112/Water_melon.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/782303565523714118/insertgoodtitle.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/782303564580126734/video0-1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/782303564142870558/redditsave.com-damn-lke9wha1zft"
-    "51.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/781867816437547008/VID-20201127-WA0009.mp4",
-    "https://cdn.discordapp.com/attachments/735690974340317216/740981642293674104/video1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/780656041045786634/video0_10_1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/780630899955859506/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/780624857884655626/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/779545142536830986/video0-227.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/779545142250962964/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/779542048512147476/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/779192844283412499/video0.mp4",
-    "https://cdn.discordapp.com/attachments/551121914987282443/778925222895681536/-498811818.mp4",
-    "https://cdn.discordapp.com/attachments/644582600366882817/778449470437326868/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/778227206518210560/video0-2.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/778227158785982484/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/778227157507768340/Cut_away.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/777891720758165554/video0.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/776038894285750342/hall-of-the-iced-tea.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/777341419538743346/video0_36.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/777326893619740682/Joker_Donald_Trump_The_world_"
-    "is_an_angry_place._HD_from_The_Daily_Show.mp4",
-    "https://cdn.discordapp.com/attachments/439519668819066880/776986323620986910/y2mate.com_-_Numa_Numa_480p.mp4",
-    "https://cdn.discordapp.com/attachments/526517763863216148/776941268440842260/video0_2-3.mp4",
-    "https://cdn.discordapp.com/attachments/439519668819066880/776978720229425172/ca42b2d7e6ac98db8bf1b7123395a1ad.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776525245002547210/26f7aa5e641743079fd06040fd137287.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776478936896634880/YJBEgJ6T9hkfnzeS.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776478936540250112/hwLRr-Hja-t6sUXS.mp4",
-    "https://cdn.discordapp.com/attachments/644582600366882817/776217505869070336/video0-259.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179149811220480/zk32h4rf1gqOmQPn.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179149411975198/76EYcJI5U0wBCuML.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179149043400734/1q45zzh4k1_s3PbD.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179148074123274/redditsave.com-amongst_ourselves-"
-    "kxxhyk2t6vt51.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179147529257010/y2mate.com_-_Dont_be_a_dinophob"
-    "e_luigi_480p.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179147214553138/redditsave.com-im_gonna_do_this-ieato"
-    "p2ldzw51.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776179144177352754/Bpa38DWrOeBT0pb.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776146694155796490/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776118577144266783/video0-2.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776118558244732928/video0-3.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776118537164423188/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776118484102545428/redditsave.com-you_can_build_anyt"
-    "hing-lvcwblipx3r51.mp4",
-    "https://cdn.discordapp.com/attachments/754488572786114610/775638737223942144/baboio.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776115685364596756/gum.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776114702639431691/1604834350862.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776113915942928404/video0_10.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/776113697608695809/video0-27.mp4",
-    "https://cdn.discordapp.com/attachments/754203239557234739/775247069031956520/like_ya_cut_g-1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413650751619113/imma_head_out.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413650214354944/discord.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413649627545640/video0-32-1.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413648708599858/s.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413295221178418/fridge.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413290884792330/video0-3.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413290360373258/yes.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775413289735159808/video0-5.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/775357653782102046/VID-20191106-WA0002.mp4",
-    "https://cdn.discordapp.com/attachments/344324740292411394/771595635446906920/Prank.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/770855163552071700/beanosofficial-20201027-0001.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/770439177011593216/video0.mp4",
-    "https://cdn.discordapp.com/attachments/703648926863065102/786171587065282570/video0.mp4",
-    "https://cdn.discordapp.com/attachments/546763235051700314/786418329903824916/Le_Fishe_1.mp4",
-    "https://cdn.discordapp.com/attachments/764954302481170432/785534987214258246/waffle.webm",
-    "https://cdn.discordapp.com/attachments/700660206329135196/783792312785567754/video0.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/783946564082073610/video0-4.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/780525591081779230/memerzone-20201108-0001.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/779503628049448990/twitter_20201120_132847.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/779180044005670983/twitter_20201119_114156.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/775506582141927444/twitter_20201108_110152.mp4",
-    "https://cdn.discordapp.com/attachments/748563164362440856/775340600395431946/mario_and_luigi_jam.mp4",
-    "https://cdn.discordapp.com/attachments/669003285625045027/775358206079533056/video0_2.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/788307395259400202/lorax.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/788244139728568340/video0.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/787960372598145024/video07.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/788429059490971688/Santa.mp4",
-    "https://cdn.discordapp.com/attachments/524938738258935828/605814230691610645/68422251_120564069234715_"
-    "3090335658794515478_n.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/789218689584857188/uranus.mp4",
-    "https://cdn.discordapp.com/attachments/717069546464477184/789184521521463296/st.mp4"]
-
 
 
 class Fun(commands.Cog):
@@ -577,6 +441,13 @@ class Fun(commands.Cog):
                     n = min(randint(*range), len(ZALGO_CHARS[t]))
                     zalgo_text += ''.join(sample(ZALGO_CHARS[t], n))
         return zalgo_text
+
+    @commands.command()
+    async def topic(self, ctx):
+        """Send a random topic into chat to jump-start a conversation."""
+        topic = random.choice(topics)
+        embed = discord.Embed(title="💬 Topic", timestamp=ctx.message.created_at, color=0x5643fd, description=topic)
+        await ctx.send(embed=embed)
 
 
 def setup(client):

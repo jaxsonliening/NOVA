@@ -117,6 +117,7 @@ class Moderation(commands.Cog):
         else:
             role = await ctx.guild.create_role(name=name)
             await ctx.send(f"<a:a_check:742966013930373151> Successfully created {role.mention}")
+            return
 
     @commands.group(invoke_without_command=True, aliases=['config'])
     async def configure(self, ctx):
