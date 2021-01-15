@@ -1,3 +1,5 @@
+# Use these variables when making pull requests that include sensitive information.
+
 token = ''
 nasa_key = ''
 reddit_password = ''
