@@ -416,7 +416,7 @@ class Fun(commands.Cog):
     async def dankvideo(self, ctx):
         """Randomly generate a funny video."""
         m = random.choice(dank_links)
-        await ctx.send(m)
+        await ctx.send(f"Video **{dank_links.index(m) + 1}** of **{len(dank_links)}**\n{m}")
 
     # credit some random github page https://github.com/calebj/calebj-cogs/blob/master/zalgo/zalgo.py
     @commands.command()
