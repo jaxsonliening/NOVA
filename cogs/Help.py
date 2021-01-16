@@ -68,7 +68,7 @@ class Help(commands.Cog):
                 embed.add_field(name='➤ **Miscellaneous**', value='`n.help Miscellaneous`', inline=True)
                 embed.add_field(name='➤ **Info**', value='`n.help Info`', inline=True)
                 embed.add_field(name='➤ **Image**', value='`n.help Image`', inline=True)
-                embed.add_field(name='➤ **Help**', value="`n.help`", inline=True)
+                embed.add_field(name='➤ **Api**', value="`n.help Api`", inline=True)
                 embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/AQCEqCF4Yl_PWAfuA-GReZoDify6--y'
                                         '4hXOJVkqaDHo/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/7099228509534945'
                                         '98/f78ed19924e8c95abc30f406d47670d7.png')
