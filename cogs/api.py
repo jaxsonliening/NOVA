@@ -25,6 +25,7 @@ async def send_wiki():
                           description=f"{wikipedia.summary(topic, sentences=2)}\n\n*For more "
                                       f"information, click the title.*")
     embed.set_image(url=image)
+    embed.set_thumbnail(url="https://imgur.com/UFc1ntQ.png")
     await message.edit(embed=embed)
 
 
@@ -43,15 +44,20 @@ class Api(commands.Cog):
         elif len(results) == 0:
             await ctx.send("<:redx:732660210132451369> No pages could be found relating to this topic.")
         else:
-            top = f""
-            for x in results[:9]:
-                top += f"**-** {x}\n"
+            top = ""
+            result_keys = []
+            values = []
+            for index, value in enumerate(results, 1):
+                top += "{}. {}\n".format(index, value)
+                result_keys.append(str(index))
+                values.append(value)
             embed = discord.Embed(title=f"I found {len(results)} results for your topic.", color=0x5643fd,
                                   timestamp=ctx.message.created_at,
-                                  description=f'Are any of these your topic? Reply with the desired result if it shows '
+                                  description=f'Are any of these your topic? Reply with the number of the desired '
+                                              f'result if it shows '
                                               f'up otherwise just reply with **no**.\n\n'
                                               f'{top}')
-            await ctx.send(embed=embed)
+            delete_this_one = await ctx.send(embed=embed)
             try:
                 while True:
                     ms = await self.client.wait_for("message", check=lambda m: m.author == ctx.author, timeout=60)
@@ -68,15 +74,42 @@ class Api(commands.Cog):
                         image = wikipedia.page(topi).images[0]
                         embed = discord.Embed(title=waki.title, color=0x5643fd, url=waki.url,
                                               timestamp=ctx.message.created_at,
-                                              description=f"{wikipedia.summary(topic, sentences=2)}\n\n*For more "
+                                              description=f"{wikipedia.summary(topi, sentences=2)}\n\n*For more "
                                                           f"information, click the title.*")
                         embed.set_image(url=image)
+                        embed.set_thumbnail(url="https://imgur.com/UFc1ntQ.png")
+                        await delete_this_one.delete()
+                        await ms.delete()
+                        await message.edit(embed=embed)
+                        return False
+                    elif ms.content in result_keys:
+                        value_index = int(ms.content) - 1
+                        topico = values[value_index]
+                        thing = discord.Embed(title='Loading...', color=0x5643fd,
+                                              description='Please stand by this process should be over shortly',
+                                              timestamp=ctx.message.created_at)
+                        thing.set_image(url='https://i.imgur.com/gVX3yPJ.gif?noredirect')
+                        thing.set_footer(text=f'Requested by {ctx.message.author}',
+                                         icon_url=ctx.message.author.avatar_url)
+                        message = await ctx.send(embed=thing)
+                        waki = wikipedia.page(topico)
+                        image = wikipedia.page(topico).images[0]
+                        embed = discord.Embed(title=waki.title, color=0x5643fd, url=waki.url,
+                                              timestamp=ctx.message.created_at,
+                                              description=f"{wikipedia.summary(topico, sentences=2)}\n\n*For more "
+                                                          f"information, click the title.*")
+                        embed.set_image(url=image)
+                        embed.set_thumbnail(url="https://imgur.com/UFc1ntQ.png")
+                        await delete_this_one.delete()
+                        await ms.delete()
                         await message.edit(embed=embed)
                         return False
                     elif ms.content.lower() == "no":
+                        await delete_this_one.delete()
                         await ctx.send("Welp sorry about that :/\nMaybe try again with more specific search terms.")
                         return False
                     else:
+                        await delete_this_one.delete()
                         await ctx.send("You didn't reply with one of the options or no.")
                         return True
             except wikipedia.PageError:
@@ -84,6 +117,8 @@ class Api(commands.Cog):
                                       "under this name.")
             except asyncio.TimeoutError:
                 return await ctx.send("You never responded so the process was abandoned.")
+            except discord.Forbidden:
+                pass
 
     @commands.command()
     async def weather(self, ctx, *, city):
