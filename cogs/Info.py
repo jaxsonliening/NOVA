@@ -169,6 +169,10 @@ class Info(commands.Cog):
         members = '{:,}'.format(total_members)
         channels = text + voice
         parsed_channels = '{:,}'.format(channels)
+        a_file = open("command_counter.json", "r")
+        json_object = json.load(a_file)
+        a_file.close()
+        parsed_commands_run = '{:,}'.format(json_object['total_commands_run'])
         embed = discord.Embed(title='About NOVA', color=0x5643fd, timestamp=ctx.message.created_at,
                               description=f'My prefix for {ctx.guild.name} is ``{pre}``\nDo ``'
                                           f'{pre}help`` for a list of commands')
@@ -183,7 +187,8 @@ class Info(commands.Cog):
                         value=f'**•** ``{guilds}`` servers with ``{members}``'
                               f' total users (`{unique}` unique)\n'
                               f'**•** ``{y}`` available emojis\n'
-                              f'**•** ``{parsed_channels}`` channels\n', inline=False)
+                              f'**•** ``{parsed_channels}`` channels\n'
+                              f'**•** ``{parsed_commands_run}`` commands run', inline=False)
         embed.add_field(name='Code', value=f'**•** ``{len(self.client.commands)}`` commands with '
                                            f'``{len(self.client.cogs)}`` cogs\n'
                                            f"**•** `{lines.get('lines'):,}` lines of code with "

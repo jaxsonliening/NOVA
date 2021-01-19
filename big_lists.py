@@ -284,7 +284,18 @@ dank_links = [
     "Gypsy_CrusaderRacist_Joker_Omegle_360p_1.mp4",
     "https://cdn.discordapp.com/attachments/717069546464477184/798401643653627904/video0.mp4",
     "https://cdn.discordapp.com/attachments/694918134066315364/798396613692882954/video0.mov",
-    "https://cdn.discordapp.com/attachments/717069546464477184/798336531604963358/video0-32-1.mp4"]
+    "https://cdn.discordapp.com/attachments/717069546464477184/798336531604963358/video0-32-1.mp4",
+    "https://cdn.discordapp.com/attachments/710859304151941193/711101102715830272/video0.mp4",
+    "https://cdn.discordapp.com/attachments/710859304151941193/711955660530778192/video0.mp4",
+    "https://cdn.discordapp.com/attachments/710859304151941193/751566340493410324/video0.mov",
+    "https://cdn.discordapp.com/attachments/717069546464477184/800808620173688832/redditsave.com-faze_obama_is_"
+    "cracked-sl86rhwiu3c61-480.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/800788492522749978/video0.mov",
+    "https://cdn.discordapp.com/attachments/717069546464477184/800656741955403796/video0.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/800642022766542848/video1.mp4",
+    "https://cdn.discordapp.com/attachments/796560508097396757/801103532501237790/help_society.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/801086715452194836/video0_-_2020-12-15T232407.611.mp4",
+    "https://cdn.discordapp.com/attachments/796560508097396757/800967780085399572/video2.mov"]
 
 topics = ['What do you think people need to know about each other before they get married?',
           'What makes you very sentimental?',

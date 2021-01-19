@@ -4,6 +4,7 @@ import humanize
 import asyncio
 import datetime
 import string
+import json
 from discord.ext import commands
 
 
@@ -89,6 +90,21 @@ class Miscellaneous(commands.Cog):
         else:
             final += f'Your message is **{res}** words long.'
         await ctx.send(final)
+
+    # Command Counter
+    @commands.Cog.listener()
+    async def on_command(self, ctx):
+        if ctx.message.author != 709922850953494598:
+            a_file = open("command_counter.json", "r")
+            json_object = json.load(a_file)
+            a_file.close()
+            json_object["total_commands_run"] += 1
+            a_file = open("command_counter.json", "w")
+            json.dump(json_object, a_file)
+            a_file.close()
+            return
+        else:
+            return
 
 
 def setup(client):

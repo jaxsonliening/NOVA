@@ -115,6 +115,9 @@ class Api(commands.Cog):
             except wikipedia.PageError:
                 return await ctx.send("<:redx:732660210132451369> Sorry, but we could not access a page "
                                       "under this name.")
+            except wikipedia.DisambiguationError:
+                return await ctx.send("<:redx:732660210132451369> Sorry, but we could not access a page "
+                                      "under this name.")
             except asyncio.TimeoutError:
                 return await ctx.send("You never responded so the process was abandoned.")
             except discord.Forbidden:
