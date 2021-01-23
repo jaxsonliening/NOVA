@@ -24,6 +24,7 @@ class Fun(commands.Cog):
 
     @commands.group()
     async def animal(self, ctx):
+        """Get a picture of various animals."""
         embed = discord.Embed(title="Animal Subcommands", color=0x5643fd, timestamp=ctx.message.created_at,
                               description=f"Use `{ctx.prefix}animal <dog/cat/bird/panda/fox>` to get a wonderful "
                                           f"animal picture"

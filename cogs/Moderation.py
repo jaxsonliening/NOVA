@@ -122,6 +122,54 @@ class Moderation(commands.Cog):
             await ctx.send(f"<a:a_check:742966013930373151> The nickname for ``{member}``"
                            f" has successfully been changed to ``{nickname}``")
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def announce(self, ctx, *, announcement):
+        """Announce something to everyone through DM instead of a channel."""
+        one = await ctx.send("**Your message will look like this:**")
+        embed = discord.Embed(title=f"Announcement from {ctx.guild.name}:", timestamp=ctx.message.created_at,
+                              color=0x5643fd, description=announcement)
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        two = await ctx.send(embed=embed)
+        await asyncio.sleep(1)
+        three = await ctx.send(f"Do you wish to proceed?\n"
+                               f"This announcement will be DMed to **{ctx.guild.member_count}** people.\n"
+                               f"**yes/no**")
+        try:
+            msg = await self.client.wait_for("message", check=lambda x: x.author == ctx.author, timeout=30)
+            if msg.content.lower() == "yes" or msg.content.lower() == "y":
+                loading = await ctx.send("Please wait this may take a while...")
+                for member in ctx.guild.members:
+                    if not member.bot:
+                        embed = discord.Embed(title=f"Announcement from {ctx.guild.name}:",
+                                              timestamp=ctx.message.created_at,
+                                              color=0x5643fd, description=announcement)
+                        embed.set_thumbnail(url=ctx.guild.icon_url)
+                        await member.send(embed=embed)
+                await loading.delete()
+                four = await ctx.send("<a:a_check:742966013930373151> The message has successfully been "
+                                      "sent to everyone!")
+                five = await ctx.send(f"{ctx.message.author.mention} these messages will be deleted in 10 seconds.")
+                await asyncio.sleep(10)
+                await five.delete()
+                await ctx.message.delete()
+                await msg.delete()
+                await one.delete()
+                await two.delete()
+                await three.delete()
+                await four.delete()
+                return
+            elif msg.content.lower() == "no" or msg.content.lower() == "n":
+                return await ctx.send("<a:a_check:742966013930373151> The message will not be sent.")
+            else:
+                return await ctx.send("<:redx:732660210132451369> You did not reply with **yes** or **no** so the "
+                                      "process was abandoned.")
+        except asyncio.TimeoutError:
+            return await ctx.send("<:redx:732660210132451369> You took too long to respond so the "
+                                  "process was abandoned.")
+        except discord.Forbidden:
+            pass
+
 
 def setup(client):
     client.add_cog(Moderation(client))
