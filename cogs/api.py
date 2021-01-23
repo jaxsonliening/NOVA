@@ -206,18 +206,6 @@ class Api(commands.Cog):
                 await ctx.send(embed=embed)
 
     @commands.command()
-    async def chat(self, ctx, *, words):
-        """Chat with an AI."""
-        url = f'https://some-random-api.ml/chatbot?message={words}'
-        async with aiohttp.ClientSession() as cs, ctx.typing():
-            async with cs.get(url) as resp:
-                if resp.status != 200:
-                    return await ctx.send("<:redx:732660210132451369> Looks like there was an error and you won't be "
-                                          "able to chat today.")
-                js = await resp.json()
-                await ctx.send(js['response'])
-
-    @commands.command()
     async def news(self, ctx, result: int = 0):
         """Show the top headlines in the U.S. for today. Enter a number (0-15) to show a certain result. """
         url = f'https://newsapi.org/v2/top-headlines?country=us&apiKey={news_key}'

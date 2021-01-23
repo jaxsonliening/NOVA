@@ -172,7 +172,7 @@ class Info(commands.Cog):
         a_file = open("command_counter.json", "r")
         json_object = json.load(a_file)
         a_file.close()
-        parsed_commands_run = '{:,}'.format(json_object['total_commands_run'])
+        parsed_commands_run = '{:,}'.format(json_object['total_commands_run'] + 1)
         embed = discord.Embed(title='About NOVA', color=0x5643fd, timestamp=ctx.message.created_at,
                               description=f'My prefix for {ctx.guild.name} is ``{pre}``\nDo ``'
                                           f'{pre}help`` for a list of commands')

@@ -22,7 +22,20 @@ class Fun(commands.Cog):
         self.client = client
         self.trivia = TriviaClient()
 
-    @commands.command(aliases=['pupper', 'doggo'])
+    @commands.group()
+    async def animal(self, ctx):
+        embed = discord.Embed(title="Animal Subcommands", color=0x5643fd, timestamp=ctx.message.created_at,
+                              description=f"Use `{ctx.prefix}animal <dog/cat/bird/panda/fox>` to get a wonderful "
+                                          f"animal picture"
+                                          f"\n\n**» n.animal dog**\n"
+                                          f"**» n.animal cat**\n"
+                                          f"**» n.animal bird**\n"
+                                          f"**» n.animal panda**\n"
+                                          f"**» n.animal fox**")
+        embed.set_image(url="https://imgur.com/oUDiZJK.jpg")
+        await ctx.send(embed=embed)
+
+    @animal.command(aliases=['pupper', 'doggo'])
     async def dog(self, ctx):
         # all credit to R.Danny for this command
         """Get a nice dog to brighten your day"""
@@ -53,7 +66,7 @@ class Fun(commands.Cog):
                                                                    f"cogs/funhouse.py#L44-L66)").set_image(url=url)
                                    .set_footer(text='https://random.dog/woof'))
 
-    @commands.command(aliases=['catto', 'kitty'])
+    @animal.command(aliases=['catto', 'kitty'])
     async def cat(self, ctx):
         """Waste time with some cat images"""
         async with aiohttp.ClientSession() as cs:
@@ -69,7 +82,7 @@ class Fun(commands.Cog):
                                                                f"py)").set_image(
                     url=js[0]['url']).set_footer(text='https://api.thecatapi.com/v1/images/search'))
 
-    @commands.command()
+    @animal.command()
     async def panda(self, ctx):
         """Cute panda images."""
         async with aiohttp.ClientSession() as cs:
@@ -81,7 +94,7 @@ class Fun(commands.Cog):
                 embed.set_image(url=js['link'])
                 await ctx.send(embed=embed)
 
-    @commands.command(aliases=['birb'])
+    @animal.command(aliases=['birb'])
     async def bird(self, ctx):
         """Cute birb images."""
         async with aiohttp.ClientSession() as cs:
@@ -93,7 +106,7 @@ class Fun(commands.Cog):
                 embed.set_image(url=js['link'])
                 await ctx.send(embed=embed)
 
-    @commands.command()
+    @animal.command()
     async def fox(self, ctx):
         """Cute fox images."""
         async with aiohttp.ClientSession() as cs:
@@ -119,29 +132,6 @@ class Fun(commands.Cog):
         embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/726475732569555014/747266621512614009/8-Ball-'
                                 'Pool-Transparent-PNG.png')
         await ctx.send(embed=embed)
-
-    @commands.command()
-    async def motivation(self, ctx):
-        """Need motivation? NOVA has you covered."""
-        responses = ['https://youtu.be/kGOQfLFzJj8', 'https://youtu.be/kYfM5uKBKKg', 'https://youtu.be/VV_zfO3HmTQ',
-                     'https://youtu.be/fLeJJPxua3E', 'https://youtu.be/5aPntFAyRts', 'https://youtu.be/M2NDQOgGycg',
-                     'https://youtu.be/FDDLCeVwhx0', 'https://youtu.be/P10hDp6mUG0', 'https://youtu.be/K8S8OvPhMDg',
-                     'https://youtu.be/zzfREEPbUsA', 'https://youtu.be/mgmVOuLgFB0', 'https://youtu.be/t8ApMdi24LI',
-                     'https://youtu.be/JXQN7W9y_Tw', 'https://youtu.be/fKtmM_45Dno', 'https://youtu.be/k9zTr2MAFRg',
-                     'https://youtu.be/bm-cCn0uRXQ', 'https://youtu.be/9bXWNeqKpjk', 'https://youtu.be/ChF3_Zbuems',
-                     'https://youtu.be/BmIM8Hx6yh8', 'https://youtu.be/oNYKDM4_ZC4', 'https://youtu.be/vdMOmeljTvA',
-                     'https://youtu.be/YPTuw5R7NKk', 'https://youtu.be/jnT29dd7LWM', 'https://youtu.be/7XzxDIJKXlk']
-        await ctx.send(random.choice(responses))
-
-    @commands.command()
-    @commands.cooldown(1, 59, commands.BucketType.member)
-    async def poke(self, ctx, member: discord.Member, *, message):
-        """This command shows up in the dictionary under the definition of annoying."""
-        member = member or ctx.message.author
-        await ctx.send(f'<a:a_check:742966013930373151> Message successfully sent to ``{member}``')
-        embed = discord.Embed(title=f'Message from {ctx.message.author}:', color=0x5643fd, description=message,
-                              timestamp=ctx.message.created_at)
-        await member.send(embed=embed)
 
     @commands.command(aliases=["bigemote"])
     async def bigmote(self, ctx, *emoji: discord.Emoji):

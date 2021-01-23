@@ -5,9 +5,8 @@ from secrets import token
 from discord.ext import commands
 from itertools import cycle
 
-prefix = ['n.', 'N.', 'n. ', 'N. ']
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix=prefix, case_insensitive=True, intents=intents)
+client = commands.Bot(command_prefix=commands.when_mentioned_or("n.", "N."), case_insensitive=True, intents=intents)
 client.remove_command('help')
 status = [f'n.help | {"{:,}".format(len(client.users))} users']
 

@@ -79,18 +79,6 @@ class Miscellaneous(commands.Cog):
                                           "https://steamcommunity.com/profiles/76561199089966378)**")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['wordcounter', 'wordcount'])
-    async def words(self, ctx, *, message):
-        """Count how many words are in your document or sentence."""
-        doc = str(message)
-        res = str(sum([i.strip(string.punctuation).isalpha() for i in doc.split()]))
-        final = ""
-        if res == "1":
-            final += "Your message is only **1** word."
-        else:
-            final += f'Your message is **{res}** words long.'
-        await ctx.send(final)
-
     # Command Counter
     @commands.Cog.listener()
     async def on_command(self, ctx):
