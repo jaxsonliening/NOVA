@@ -36,7 +36,7 @@ class Dev(commands.Cog):
                          password=reddit_password,
                          user_agent=reddit_user_agent)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def eval(self, ctx, *, cmd):
         """Evaluates expressions (owner only)
@@ -68,7 +68,7 @@ class Dev(commands.Cog):
         result = (await eval(f"{fn_name}()", env))
         await ctx.send(result)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def modq(self, ctx, sub):
         """This isn't for you to use"""

@@ -366,6 +366,59 @@ class Api(commands.Cog):
                                           timestamp=ctx.message.created_at)
                     await ctx.send(embed=embed)
 
+    @commands.command()
+    async def bitcoin(self, ctx):
+        """Find data on current bitcoin prices."""
+        async with aiohttp.ClientSession() as cs, ctx.typing():
+            async with cs.get(f"https://api.coindesk.com/v1/bpi/currentprice.json") as resp:
+                if resp.status != 200:
+                    return await ctx.send('<:RedX:707949835960975411> No bitcoin data could be gathered.')
+                else:
+                    js = await resp.json(content_type='application/javascript')
+                    embed = discord.Embed(title="Bitcoin Price", color=0x5643fd, timestamp=ctx.message.created_at,
+                                          description=f"**USD** - United States Dollar\n"
+                                                      f"${js['bpi']['USD']['rate']}\n\n"
+                                                      f"**GBP** - British Pound Sterling\n"
+                                                      f"£{js['bpi']['GBP']['rate']}\n\n"
+                                                      f"**EUR** - Euro\n"
+                                                      f"€{js['bpi']['EUR']['rate']}")
+                    embed.add_field(name="Disclaimer", value="This data was produced from the "
+                                                             "CoinDesk Bitcoin Price Index "
+                                                             "(USD). Non-USD currency data converted using hourly "
+                                                             "conversion"
+                                                             " rate from https://openexchangerates.org", inline=True)
+                    embed.set_thumbnail(url="https://imgur.com/JbpNY69.jpg")
+                    await ctx.send(embed=embed)
+
+    @commands.command()
+    async def image(self, ctx, *, search):
+        """Find an image based off of a search.."""
+        async with aiohttp.ClientSession() as cs, ctx.typing():
+            async with cs.get(f"https://pixabay.com/api/?key="
+                              f"{pixaby}&q={search}&image_type=all&safesearch=true") as resp:
+                if resp.status != 200:
+                    return await ctx.send('<:RedX:707949835960975411> No images could be found.')
+                else:
+                    try:
+                        js = await resp.json()
+                        top_result = js['hits'][0]
+                        embed = discord.Embed(title=f"Top result for *{search}*", color=0x5643fd,
+                                              timestamp=ctx.message.created_at,
+                                              description=f"**Results:** {js['totalHits']}\n"
+                                                          f"**Image Type:** {top_result['type'].capitalize()}\n"
+                                                          f"**Image Tags:** {top_result['tags']}\n"
+                                                          f"**Dimensions:** {top_result['imageWidth']} by "
+                                                          f"{top_result['imageHeight']}\n"
+                                                          f"**Views/Likes/Comments/Downloads:** {top_result['views']}/"
+                                                          f"{top_result['likes']}/{top_result['comments']}/"
+                                                          f"{top_result['downloads']}\n"
+                                                          f"**Website Link:** {top_result['pageURL']}")
+                        embed.set_image(url=top_result['largeImageURL'])
+                        await ctx.send(embed=embed)
+                    except IndexError:
+                        await ctx.send('<:RedX:707949835960975411> No images could be found.\n'
+                                       'Try again with different search terms.')
+
 
 def setup(client):
     client.add_cog(Api(client))
