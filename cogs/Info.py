@@ -2,6 +2,7 @@ import discord
 import platform
 import json
 import os
+import inspect
 import asyncio
 from discord.ext import commands
 
@@ -216,6 +217,58 @@ class Info(commands.Cog):
                                            description=f"Do `{ctx.prefix}help <cog>` to show info for any cog!"
                                                        + "\n\n" + "\n".join(
                                                cogs)))
+
+    @commands.command(aliases=['src'])
+    async def source(self, ctx, *, command: str = None):
+        """Find the full source code for a command."""
+        # https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/meta.py#L328-L366
+        # Copyright (c) 2015 Rapptz
+        # Copyright (c) 2020 niztg
+        # https://github.com/niztg/CyberTron5000
+        if not command:
+            embed = discord.Embed(color=0x5643fd,
+                                  description="All source code can be found on NOVA's personal"
+                                              " GitHub repository",
+                                  url="https://github.com/YeetVegetabales/NOVA", title="Source Code")
+            embed.add_field(name="<:staff:730846674775179394> LICENSE",
+                            value=f"[MIT](https://opensource.org/licenses/MIT)\n"
+                                  f"https://github.com/YeetVegetabales/NOVA")
+            embed.set_thumbnail(url=self.client.user.avatar_url)
+            embed.set_image(url="https://imgur.com/ykrkpNd.jpg")
+            return await ctx.send(embed=embed)
+        elif command in ("help", "?"):
+            embed = discord.Embed(colour=0x5643fd,
+                                  title=f"<:github:734999696845832252> Sourcecode for help",
+                                  url="https://github.com/YeetVegetabales/NOVA/blob/master/cogs/Help.py#L13-L125",
+                                  description="\n<:staff:730846674775179394> "
+                                              "[LICENSE](https://opensource.org/licenses/MIT)\n\n"
+                                              "https://github.com/YeetVegetabales/NOVA")
+            embed.set_thumbnail(url=self.client.user.avatar_url)
+            embed.set_image(url='https://imgur.com/ykrkpNd.jpg')
+            await ctx.send(embed=embed)
+        else:
+            cmd = self.client.get_command(command)
+            if not cmd:
+                return await ctx.send("<:redx:732660210132451369> Command not found.")
+            file = cmd.callback.__code__.co_filename
+            location = os.path.relpath(file)
+            total, fl = __import__('inspect').getsourcelines(cmd.callback)
+            ll = fl + (len(total) - 1)
+            url = f"https://github.com/YeetVegetabales/NOVA/blob/master/{location}#L{fl}-L{ll}"
+            if not cmd.aliases:
+                char = '\u200b'
+            else:
+                char = '/'
+            embed = discord.Embed(color=0x5643fd,
+                                  title=f"<:github:734999696845832252> "
+                                        f"Sourcecode for {cmd.name}{char}{'/'.join(cmd.aliases)}",
+                                  url=url,
+                                  description="\n<:staff:730846674775179394> "
+                                              "[LICENSE](https://opensource.org/licenses/MIT)\n\n"
+                                              "https://github.com/YeetVegetabales/NOVA")
+            embed.set_thumbnail(url=self.client.user.avatar_url)
+            embed.set_image(url="https://imgur.com/ykrkpNd.jpg")
+            await ctx.send(embed=embed)
 
 
 def setup(client):
