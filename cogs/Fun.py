@@ -15,14 +15,14 @@ ZALGO_DEFAULT_AMT = 3
 ZALGO_MAX_AMT = 7
 
 
-class Fun(commands.Cog):
+class fun(commands.Cog):
     """Use NOVA to have a little fun on your server"""
 
     def __init__(self, client):
         self.client = client
         self.trivia = TriviaClient()
 
-    @commands.group()
+    @commands.group(invoke_without_command=True)
     async def animal(self, ctx):
         """Get a picture of various animals."""
         embed = discord.Embed(title="Animal Subcommands", color=0x5643fd, timestamp=ctx.message.created_at,
@@ -188,4 +188,4 @@ class Fun(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Fun(client))
+    client.add_cog(fun(client))

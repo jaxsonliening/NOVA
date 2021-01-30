@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from discord.ext import commands
 
 
-class Math(commands.Cog):
+class math(commands.Cog):
     """Various commands using math"""
 
     def __init__(self, client):
@@ -441,4 +441,4 @@ class Math(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Math(client))
+    client.add_cog(math(client))

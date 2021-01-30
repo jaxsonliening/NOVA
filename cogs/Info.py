@@ -47,7 +47,7 @@ def lines_of_code():
 lines = lines_of_code()
 
 
-class Info(commands.Cog):
+class info(commands.Cog):
     """Gain some info on users or servers"""
 
     def __init__(self, client):
@@ -272,4 +272,4 @@ class Info(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Info(client))
+    client.add_cog(info(client))

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class Image(commands.Cog):
+class image(commands.Cog):
     """Image manipulation commands to spice up your profile picture."""
 
     def __init__(self, client):
@@ -140,4 +140,4 @@ class Image(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Image(client))
+    client.add_cog(image(client))

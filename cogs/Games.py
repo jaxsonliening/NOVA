@@ -14,7 +14,7 @@ from async_timeout import timeout
 from big_lists import *
 
 
-class Games(commands.Cog):
+class games(commands.Cog):
     """Play games in your server"""
 
     def __init__(self, client):
@@ -440,4 +440,4 @@ class Games(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Games(client))
+    client.add_cog(games(client))

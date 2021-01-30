@@ -8,7 +8,7 @@ import json
 from discord.ext import commands
 
 
-class Miscellaneous(commands.Cog):
+class miscellaneous(commands.Cog):
     """Helpful commands that don't quite fit in a certain category"""
 
     def __init__(self, client):
@@ -65,6 +65,7 @@ class Miscellaneous(commands.Cog):
 
     @commands.command(aliases=['dev'])
     async def developer(self, ctx):
+        """Get some basic info about this bot's creator."""
         embed = discord.Embed(title='Developer - YeetVegetabales', color=0x5643fd, timestamp=ctx.message.created_at,
                               description="The developer of this bot is YeetVegetabales. He is 15 years old and"
                                           " made NOVA in order to learn how to code. DM him on discord to get any "
@@ -96,4 +97,4 @@ class Miscellaneous(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Miscellaneous(client))
+    client.add_cog(miscellaneous(client))

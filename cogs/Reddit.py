@@ -8,7 +8,7 @@ from discord.ext import commands
 from secrets import *
 
 
-class Reddit(commands.Cog):
+class reddit(commands.Cog):
     """Gather info and posts from many places on reddit"""
 
     def __init__(self, client, reddit):
@@ -287,7 +287,7 @@ class Reddit(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Reddit(client, reddit=praw.Reddit(client_id=reddit_client_id,
+    client.add_cog(reddit(client, reddit=praw.Reddit(client_id=reddit_client_id,
                                                      client_secret=reddit_client_secret,
                                                      username=reddit_username,
                                                      password=reddit_password,

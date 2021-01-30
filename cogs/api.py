@@ -29,7 +29,7 @@ async def send_wiki():
     await message.edit(embed=embed)
 
 
-class Api(commands.Cog):
+class api(commands.Cog):
     """Interact with other parts of the internet using APIs."""
 
     def __init__(self, client):
@@ -401,11 +401,15 @@ class Api(commands.Cog):
                 else:
                     try:
                         js = await resp.json()
-                        top_result = js['hits'][0]
-                        embed = discord.Embed(title=f"Top result for *{search}*", color=0x5643fd,
+                        maximum = len(js['hits'])
+                        number_list = []
+                        for i in range(0, maximum):
+                            number_list.append(i)
+                        index = random.choice(number_list)
+                        top_result = js['hits'][index]
+                        embed = discord.Embed(title=f"Result {index + 1} of {maximum}", color=0x5643fd,
                                               timestamp=ctx.message.created_at,
-                                              description=f"**Results:** {js['totalHits']}\n"
-                                                          f"**Image Type:** {top_result['type'].capitalize()}\n"
+                                              description=f"**Image Type:** {top_result['type'].capitalize()}\n"
                                                           f"**Image Tags:** {top_result['tags']}\n"
                                                           f"**Dimensions:** {top_result['imageWidth']} by "
                                                           f"{top_result['imageHeight']}\n"
@@ -421,4 +425,4 @@ class Api(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Api(client))
+    client.add_cog(api(client))

@@ -4,7 +4,7 @@ import random
 from discord.ext import commands
 
 
-class Moderation(commands.Cog):
+class moderation(commands.Cog):
     """Commands to help you better manage your server"""
 
     def __init__(self, client):
@@ -124,4 +124,4 @@ class Moderation(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Moderation(client))
+    client.add_cog(moderation(client))

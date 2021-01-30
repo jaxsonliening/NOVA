@@ -60,15 +60,15 @@ class Help(commands.Cog):
                                       f"<:share:730823872265584680>[Join the support server]"
                                       f"(https://discord.gg/Uqh9NXY)\n<:share:730823872265584680>[View the source code]"
                                       f"(https://github.com/YeetVegetabales/NOVA/tree/master/cogs)")
-                embed.add_field(name='➤ **Fun**', value='`n.help Fun`', inline=True)
-                embed.add_field(name='➤ **Moderation**', value='`n.help Moderation`', inline=True)
-                embed.add_field(name='➤ **Math**', value='`n.help Math`', inline=True)
-                embed.add_field(name='➤ **Games**', value='`n.help Games`', inline=True)
-                embed.add_field(name='➤ **Reddit**', value='`n.help Reddit`', inline=True)
-                embed.add_field(name='➤ **Miscellaneous**', value='`n.help Miscellaneous`', inline=True)
-                embed.add_field(name='➤ **Info**', value='`n.help Info`', inline=True)
-                embed.add_field(name='➤ **Image**', value='`n.help Image`', inline=True)
-                embed.add_field(name='➤ **Api**', value="`n.help Api`", inline=True)
+                embed.add_field(name='➤ **Fun**', value='`n.help fun`', inline=True)
+                embed.add_field(name='➤ **Moderation**', value='`n.help moderation`', inline=True)
+                embed.add_field(name='➤ **Math**', value='`n.help math`', inline=True)
+                embed.add_field(name='➤ **Games**', value='`n.help games`', inline=True)
+                embed.add_field(name='➤ **Reddit**', value='`n.help reddit`', inline=True)
+                embed.add_field(name='➤ **Miscellaneous**', value='`n.help miscellaneous`', inline=True)
+                embed.add_field(name='➤ **Info**', value='`n.help info`', inline=True)
+                embed.add_field(name='➤ **Image**', value='`n.help image`', inline=True)
+                embed.add_field(name='➤ **Api**', value="`n.help api`", inline=True)
                 embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/AQCEqCF4Yl_PWAfuA-GReZoDify6--y'
                                         '4hXOJVkqaDHo/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/7099228509534945'
                                         '98/f78ed19924e8c95abc30f406d47670d7.png')

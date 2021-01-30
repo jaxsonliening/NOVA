@@ -297,7 +297,15 @@ dank_links = [
     "https://cdn.discordapp.com/attachments/717069546464477184/801086715452194836/video0_-_2020-12-15T232407.611.mp4",
     "https://cdn.discordapp.com/attachments/796560508097396757/800967780085399572/video2.mov",
     "https://cdn.discordapp.com/attachments/735946400424132678/801827237955239956/redditsave.com-pls_guys_not_watching"
-    "_alone-7b33j5ba02c61.mp4"]
+    "_alone-7b33j5ba02c61.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/802659328041287720/video0-235.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/802392668448751646/video0.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/802353953789837332/video0.mov",
+    "https://cdn.discordapp.com/attachments/717069546464477184/802839630445412382/video079.mp4",
+    "https://cdn.discordapp.com/attachments/757134729345761371/803165778328944650/video0-1_1.mp4",
+    "https://cdn.discordapp.com/attachments/737668279463837766/803325121728610334/sonic.mov",
+    "https://cdn.discordapp.com/attachments/717069546464477184/803663480871845938/video085.mp4",
+    "https://cdn.discordapp.com/attachments/608893445351931906/780834576452419624/video4.mp4"]
 
 topics = ['What do you think people need to know about each other before they get married?',
           'What makes you very sentimental?',

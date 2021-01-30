@@ -23,7 +23,7 @@ def insert_returns(body):
         insert_returns(body[-1].body)
 
 
-class Dev(commands.Cog):
+class dev(commands.Cog):
     """Commands for the creator of this bot, YeetVegetabales."""
 
     def __init__(self, client, reddit):
@@ -94,7 +94,7 @@ class Dev(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Dev(client, reddit=praw.Reddit(client_id=reddit_client_id,
+    client.add_cog(dev(client, reddit=praw.Reddit(client_id=reddit_client_id,
                                                   client_secret=reddit_client_secret,
                                                   username=reddit_username,
                                                   password=reddit_password,
