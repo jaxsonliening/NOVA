@@ -438,6 +438,181 @@ class games(commands.Cog):
         except asyncio.TimeoutError:
             await ctx.send("You took too long to respond so the game was abandoned")
 
+    @commands.group(invoke_without_command=True)
+    async def case(self, ctx, *, case_name: str = None):
+        """Open a CSGO case."""
+        case_list = ['danger zone', 'prisma', 'fracture', 'operation broken fang', 'prisma 2', 'glove']
+        if not case_name:
+            embed = discord.Embed(title="CSGO CASES", color=0x5643fd, timestamp=ctx.message.created_at,
+                                  description="Here is a list of all available cases to open at the moment. "
+                                              "I plan on adding more in the future but just enjoy these for "
+                                              "the time being. Run `n.case <case_name>` to open one yourself!")
+            embed.set_image(url="https://i.imgur.com/igOWNRL.gif")
+            embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
+            embed.add_field(name="Stats", inline=False, value="Run `n.case stats` to see the stats for each rarity!")
+            embed.add_field(name="Cases", inline=False,
+                            value="➤ random\n"
+                                  "➤ danger zone\n"
+                                  "➤ prisma\n"
+                                  "➤ prisma 2\n"
+                                  "➤ fracture\n"
+                                  "➤ operation broken fang\n"
+                                  "➤ glove")
+            embed.add_field(name="Chances", inline=False,
+                            value="➤ Mil-Spec (Blue) - 79.92%\n"
+                                  "➤ Restricted (Purple) - 15.96%\n"
+                                  "➤ Classified (Pink) - 3.66%\n"
+                                  "➤ Covert (Red) - 0.91%\n"
+                                  "➤ Legendary (Gold) - 0.31%\n\nAll weapons have a 10% chance of being StatTrak:tm:")
+            await ctx.send(embed=embed)
+        else:
+            try:
+                # picking the case if it was random
+                if case_name.lower() == "random":
+                    case_name = random.choice(case_list)
+                rarity = ''
+                grade = ''
+                # opening stats
+                a_file = open("cases_stats.json", "r")
+                case_stats = json.load(a_file)
+                # determine rarity
+                out_number = random.randint(0, 1000000)
+                if 0 <= out_number <= 799200:
+                    rarity += "Mil-Spec"
+                    rarity_color = 0x4b68fb
+                    case_stats['mil-spec'] += 1
+                    b_file = open("cases_stats.json", "w")
+                    json.dump(case_stats, b_file)
+                    b_file.close()
+                elif 799201 <= out_number <= 959000:
+                    rarity += "Restricted"
+                    rarity_color = 0x8952fc
+                    case_stats['restricted'] += 1
+                    b_file = open("cases_stats.json", "w")
+                    json.dump(case_stats, b_file)
+                    b_file.close()
+                elif 959001 <= out_number <= 991000:
+                    rarity += "Classified"
+                    rarity_color = 0xd55ae6
+                    case_stats['classified'] += 1
+                    b_file = open("cases_stats.json", "w")
+                    json.dump(case_stats, b_file)
+                    b_file.close()
+                elif 991001 <= out_number <= 997400:
+                    rarity += "Covert"
+                    rarity_color = 0xc44546
+                    case_stats['covert'] += 1
+                    b_file = open("cases_stats.json", "w")
+                    json.dump(case_stats, b_file)
+                    b_file.close()
+                else:
+                    rarity += "Rare Legendary Item"
+                    rarity_color = 0xFFD700
+                    case_stats['rare legendary item'] += 1
+                    b_file = open("cases_stats.json", "w")
+                    json.dump(case_stats, b_file)
+                    b_file.close()
+                # determine grade
+                out = random.randint(0, 10000)
+                if 0 <= out <= 792:
+                    grade += "Well-Worn"
+                elif 793 <= out <= 1785:
+                    grade += "Battle-Scarred"
+                elif 1786 <= out <= 6103:
+                    grade += "Field-Tested"
+                elif 6104 <= out <= 8572:
+                    grade += "Minimal Wear"
+                else:
+                    grade += "Factory New"
+                number = random.randint(0, 10000)
+                # decide stat trak
+                if 0 <= number <= 1009:
+                    StatTrak = True
+                else:
+                    StatTrak = False
+                # load the cases
+                a_file = open("cases.json", "r")
+                cases = json.load(a_file)
+                # pick a random skin from the rarity
+                maxi = len(cases['cases'][case_name.lower()][rarity.lower()])
+                indexer = random.randint(0, int(maxi))
+                if indexer == maxi:
+                    indexer = -1
+                skin_name = cases['cases'][case_name.lower()][rarity.lower()][indexer]
+                # pick out the image url
+                image = cases['cases'][case_name.lower()][rarity.lower()][indexer][str(list(skin_name.keys())[0])][
+                    'img_url']
+                description = f""
+                if StatTrak is True:
+                    description += f"StatTrak:tm: {rarity} \n{str(list(skin_name.keys())[0])} \n{grade}"
+                else:
+                    description += f"{rarity} \n{str(list(skin_name.keys())[0])} \n{grade}"
+                embed = discord.Embed(color=0xF5F5F5)
+                embed.set_image(url="https://i.imgur.com/igOWNRL.gif")
+                msg = await ctx.send(embed=embed)
+                await asyncio.sleep(2)
+                embed = discord.Embed(title=f"{case_name.title()} Case", color=rarity_color, description=description)
+                embed.set_image(url=image)
+                embed.set_footer(text=f'Opened by {ctx.message.author}', icon_url=ctx.message.author.avatar_url)
+                await msg.edit(embed=embed)
+            except KeyError:
+                embed = discord.Embed(title="CSGO CASES", color=0xFF0000, timestamp=ctx.message.created_at,
+                                      description="The case you entered was not a valid case! There is a limited "
+                                                  "number of cases you can open as more are being added. Below are a"
+                                                  " list of the cases you can currently open. Use `n.case <case_name>`"
+                                                  " to open them.")
+                embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
+                embed.add_field(name="Available Cases", inline=False,
+                                value="➤ `random`\n"
+                                      "➤ `danger zone`\n"
+                                      "➤ `prisma`\n"
+                                      "➤ `prisma 2`\n"
+                                      "➤ `fracture`\n"
+                                      "➤ `operation broken fang`\n"
+                                      "➤ `glove`")
+                await ctx.send(embed=embed)
+
+    @case.command()
+    async def stats(self, ctx):
+        """Shows the global stats for case openings."""
+        a_file = open("cases_stats.json", "r")
+        case_stats = json.load(a_file)
+        total = case_stats['mil-spec'] + case_stats['restricted'] + case_stats['classified'] + case_stats['covert'] + \
+                case_stats['rare legendary item']
+        embed = discord.Embed(color=0x5643fd, title="CSGO Case Stats", timestamp=ctx.message.created_at)
+        embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
+        embed.add_field(name="Total Cases Opened", inline=False, value=f"➤ `{total}`")
+        embed.add_field(name="Mil-Spec", inline=False, value=f"➤ `{case_stats['mil-spec']}`")
+        embed.add_field(name="Restricted", inline=False, value=f"➤ `{case_stats['restricted']}`")
+        embed.add_field(name="Classified", inline=False, value=f"➤ `{case_stats['classified']}`")
+        embed.add_field(name="Covert", inline=False, value=f"➤ `{case_stats['covert']}`")
+        embed.add_field(name="Rare Legendary Item", inline=False, value=f"➤ `{case_stats['rare legendary item']}`")
+        await ctx.send(embed=embed)
+
+
+case_json_template = """
+ "mil-spec": [{"": {"img_url": ""}},
+                   {"": {"img_url": ""}},
+                   {"": {"img_url": ""}},
+                   {"": {"img_url": ""}},
+                   {"": {"img_url": ""}},
+                   {"": {"img_url": ""}},
+                   {"": {"img_url": ""}}],
+      "restricted": [{"": {"img_url": ""}},
+                     {"": {"img_url": ""}},
+                     {"": {"img_url": ""}},
+                     {"": {"img_url": ""}},
+                     {"": {"img_url": ""}}],
+      "classified": [{"": {"img_url": ""}},
+                     {"": {"img_url": ""}},
+                     {"": {"img_url": ""}}],
+      "covert": [{"": {"img_url": ""}},
+                 {"": {"img_url": ""}}],
+      "rare legendary item": [{"": {"img_url": ""}},
+                              {"": {"img_url": ""}},
+                              {"": {"img_url": ""}}]
+"""
+
 
 def setup(client):
     client.add_cog(games(client))
