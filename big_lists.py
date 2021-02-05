@@ -305,7 +305,8 @@ dank_links = [
     "https://cdn.discordapp.com/attachments/757134729345761371/803165778328944650/video0-1_1.mp4",
     "https://cdn.discordapp.com/attachments/737668279463837766/803325121728610334/sonic.mov",
     "https://cdn.discordapp.com/attachments/717069546464477184/803663480871845938/video085.mp4",
-    "https://cdn.discordapp.com/attachments/608893445351931906/780834576452419624/video4.mp4"]
+    "https://cdn.discordapp.com/attachments/608893445351931906/780834576452419624/video4.mp4",
+    "https://cdn.discordapp.com/attachments/717069546464477184/805350231688347648/video0.mov"]
 
 topics = ['What do you think people need to know about each other before they get married?',
           'What makes you very sentimental?',

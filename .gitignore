@@ -1,2 +1,4 @@
 secrets.py
+user_inv.json
 cogs/developer.py
+bot_prefixes.json

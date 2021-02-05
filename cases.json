@@ -130,7 +130,29 @@
                  {"M4A4 | Buzz Kill": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_gs_m4a4_sector_light_large.43ec111ef558f74c49e31621d455f93ba414714e.png"}}],
       "rare legendary item": [{"Bloodhound Gloves | Bronzed": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/studded_bloodhound_gloves_bloodhound_metallic_light_large.5a09f347d9be3d3552bd3dd6abba816e5bf1b349.png"}},
                               {"Driver Gloves | Crimson Weave": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/slick_gloves_slick_red_light_large.137455fd6486c53fef15a523f86e2928743de97e.png"}},
-                              {"Hand Wraps | Badlands\n": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/leather_handwraps_handwrap_fabric_orange_camo_light_large.f8453c60f74a846bd3c05310de4f004cd95a1aa2.png"}}]
+                              {"Hand Wraps | Badlands": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/leather_handwraps_handwrap_fabric_orange_camo_light_large.f8453c60f74a846bd3c05310de4f004cd95a1aa2.png"}}]
+    },
+    "cs20": {
+      "mil-spec": [{"SCAR-20 | Assault": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_scar20_cu_scar_assault_light_large.57aa89979dfaab334bb3e91c09f54269e98cf47a.png"}},
+                   {"MAG-7 | Popdog": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mag7_gs_mag7_popdog_light_large.3c45fd23cd1947bb9b1747e36823980a44feaed4.png"}},
+                   {"Tec-9 | Flash Out": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_tec9_cu_tec9_flash_light_large.977076b5fe7a2fdb9337de2a3ff7c4b867e9b674.png"}},
+                   {"Dual Berettas | Elite 1.6": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_elite_gs_dual_elites_classic_light_large.a899ad9f2e1bb8522fdeb022c99c64c2456826d1.png"}},
+                   {"MAC-10 | Classic Crate": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mac10_gs_mac10_dust_crate_light_large.988816a75bc41f34cb18aff91ce6256299a9a52c.png"}},
+                   {"FAMAS | Decommissioned": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_famas_cu_famas_nuke_tension_light_large.0cf9412e22f626e675b76506cf2f240a64a05b22.png"}},
+                   {"Glock-18 | Sacrifice": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_glock_cu_glock_hero_light_large.7b0f5975c7e0ba3ce1694c4795520184fc56c367.png"}}],
+      "restricted": [{"M249 | Aztec": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m249_aq_m249_aztec_light_large.81173c5b61be806039e643a0c273e4dce33bd5ee.png"}},
+                     {"Five-SeveN | Buddy": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_fiveseven_cu_fiveseven_gsg9_light_large.870dec48f951d3a6420bdb332f0acd25ee1254b1.png"}},
+                     {"UMP-45 | Plastique": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ump45_cu_ump_bomb_light_large.48162f997295cb72c35acb2eafbef620b60a1659.png"}},
+                     {"P250 | Inferno": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p250_gs_p250_inferno_light_large.89b435cf4b1eab8a9fed8f7aa19228fe9421b4eb.png"}},
+                     {"MP5-SD | Agent": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp5sd_gs_mp5_fbi_light_large.98c397d31feb201fd3d754a2e0b1d1508d75b2b9.png"}}],
+      "classified": [{"P90 | Nostalgia": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p90_cu_p90_nostalgia_light_large.8d1cfe3582915ab9702b57e1376eb0d0ffab2331.png"}},
+                     {"AUG | Death by Puppy": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_aug_am_aug_death_by_doggy_light_large.eb9b56273d30c50b93d2cb0a2e2843b525012878.png"}},
+                     {"MP9 | Hydra": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp9_cu_mp9_hydra_light_large.b7763a811b3bc9d19d04502fba0edc6cbe355766.png"}}],
+      "covert": [{"FAMAS | Commemoration": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_famas_gs_famas_legacy_gold_light_large.34013884c12276d1c83ceb4ea9fb83428df02920.png"}},
+                 {"AWP | Wildfire": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_wildfire_light_large.61e36b12eb45a39836cdb5badb5a536737684861.png"}}],
+      "rare legendary item": [{"Classic Knife | Stained": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_aq_forced_light_large.7f67fec75394666e6df6aa8a31aa492d4540fc94.png"}},
+                              {"Classic Knife | Fade": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_aa_fade_light_large.f39aed45b6599c0e5850cb948b81f45268febc83.png"}},
+                              {"Classic Knife | Slaughter": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_am_zebra_light_large.ae26f920f022f2dc8d700bba2dee4e7003552a4b.png"}}]
     }
   }
 }

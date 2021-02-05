@@ -21,13 +21,17 @@ class games(commands.Cog):
         self.client = client
         self.trivia = TriviaClient()
         self.aki = akinator.Akinator()
+        self.coin = "<:coin:781367758612725780>"
 
-    @commands.command()
+    @commands.command(aliases=['mm'])
     async def mastermind(self, ctx):
         """You have 5 tries to guess a 4 digit code. Can you do it?"""
         part = random.sample(list(map(str, list(range(9)))), 4)
         code = [int(x) for x in part]
         human_code = "".join(str(x) for x in code)
+        econ_data = open("economy.json", "r")
+        money = json.load(econ_data)
+        econ_data.close()
         embed = discord.Embed(title='Welcome to Mastermind', color=0x5643fd, timestamp=ctx.message.created_at,
                               description='Mastermind is a logic and guessing game where you have to find a four-digit '
                                           'code in only five tries. Type out four numbers to begin guessing!\n\n'
@@ -59,6 +63,12 @@ class games(commands.Cog):
                 if r == code:
                     await ctx.send(f"<a:party:773063086109753365> That's the right code. You win! "
                                    f"<a:party:773063086109753365>\nYou cracked the code in **{i + 1}** tries.")
+                    if str(ctx.message.author.id) in money.keys():
+                        money[str(ctx.message.author.id)]['wallet'] += 100
+                        econ_data = open("economy.json", "w")
+                        json.dump(money, econ_data)
+                        econ_data.close()
+                        await ctx.send(f"You also gained {self.coin}`100` for winning.")
                     break
                 i += 1
             except ValueError:
@@ -68,10 +78,22 @@ class games(commands.Cog):
             except asyncio.TimeoutError:
                 await ctx.send(f'{ctx.message.author.mention},'
                                f' you took too long to guess! The correct code was **{human_code}**.')
+                if ctx.message.author.id in money.keys():
+                    money[str(ctx.message.author.id)]['wallet'] -= 100
+                    econ_data = open("economy.json", "w")
+                    json.dump(money, econ_data)
+                    econ_data.close()
+                    await ctx.send(f"You also lost {self.coin}`100` for losing.")
                 break
         else:
             await ctx.send(f"{ctx.message.author.mention}, you ran out of tries! The correct code was "
                            f"**{human_code}**.")
+            if str(ctx.message.author.id) in money.keys():
+                money[str(ctx.message.author.id)]['wallet'] -= 100
+                econ_data = open("economy.json", "w")
+                json.dump(money, econ_data)
+                econ_data.close()
+                await ctx.send(f"You also lost {self.coin}`100` for losing.")
 
     @commands.command()
     async def fight(self, ctx, member: discord.Member = None):
@@ -441,7 +463,7 @@ class games(commands.Cog):
     @commands.group(invoke_without_command=True)
     async def case(self, ctx, *, case_name: str = None):
         """Open a CSGO case."""
-        case_list = ['danger zone', 'prisma', 'fracture', 'operation broken fang', 'prisma 2', 'glove']
+        case_list = ['danger zone', 'prisma', 'fracture', 'operation broken fang', 'prisma 2', 'glove', 'cs20']
         if not case_name:
             embed = discord.Embed(title="CSGO CASES", color=0x5643fd, timestamp=ctx.message.created_at,
                                   description="Here is a list of all available cases to open at the moment. "
@@ -449,7 +471,8 @@ class games(commands.Cog):
                                               "the time being. Run `n.case <case_name>` to open one yourself!")
             embed.set_image(url="https://i.imgur.com/igOWNRL.gif")
             embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
-            embed.add_field(name="Stats", inline=False, value="Run `n.case stats` to see the stats for each rarity!")
+            embed.add_field(name="Stats", inline=False, value="Run `n.case stats` to see the stats for each rarity\n"
+                                                              "Run `n.case inventory` to see your personal inventory")
             embed.add_field(name="Cases", inline=False,
                             value="➤ random\n"
                                   "➤ danger zone\n"
@@ -457,7 +480,8 @@ class games(commands.Cog):
                                   "➤ prisma 2\n"
                                   "➤ fracture\n"
                                   "➤ operation broken fang\n"
-                                  "➤ glove")
+                                  "➤ glove\n"
+                                  "➤ cs20")
             embed.add_field(name="Chances", inline=False,
                             value="➤ Mil-Spec (Blue) - 79.92%\n"
                                   "➤ Restricted (Purple) - 15.96%\n"
@@ -467,6 +491,26 @@ class games(commands.Cog):
             await ctx.send(embed=embed)
         else:
             try:
+                # working on banking and filtering
+                econ_data = open("economy.json", "r")
+                money = json.load(econ_data)
+                econ_data.close()
+                if str(ctx.message.author.id) not in money.keys():
+                    return await ctx.send("You cannot open a case because you haven't created a bank account yet!\n"
+                                          "Run `n.create` in order to begin.")
+                wallet_amount = money[str(ctx.message.author.id)]['wallet']
+                if wallet_amount < 100:
+                    return await ctx.send(f"You do not have enough money in your wallet to open a case!\n"
+                                          f"You must have at least {self.coin}`100` in order to do so.")
+                # writing in inventory
+                inv = open("user_inv.json", "r")
+                inventories = json.load(inv)
+                if str(ctx.message.author.id) not in inventories.keys():
+                    inventories[str(ctx.message.author.id)] = {"mil-spec": 0, "restricted": 0, "classified": 0,
+                                                               "covert": 0, "rare legendary item": 0}
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
                 # picking the case if it was random
                 if case_name.lower() == "random":
                     case_name = random.choice(case_list)
@@ -475,6 +519,11 @@ class games(commands.Cog):
                 # opening stats
                 a_file = open("cases_stats.json", "r")
                 case_stats = json.load(a_file)
+                # take their money
+                money[str(ctx.message.author.id)]['wallet'] -= 100
+                econ_data = open("economy.json", "w")
+                json.dump(money, econ_data)
+                econ_data.close()
                 # determine rarity
                 out_number = random.randint(0, 1000000)
                 if 0 <= out_number <= 799200:
@@ -484,6 +533,11 @@ class games(commands.Cog):
                     b_file = open("cases_stats.json", "w")
                     json.dump(case_stats, b_file)
                     b_file.close()
+                    inventories[str(ctx.message.author.id)]['mil-spec'] += 1
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
+                    back = 50
                 elif 799201 <= out_number <= 959000:
                     rarity += "Restricted"
                     rarity_color = 0x8952fc
@@ -491,6 +545,11 @@ class games(commands.Cog):
                     b_file = open("cases_stats.json", "w")
                     json.dump(case_stats, b_file)
                     b_file.close()
+                    inventories[str(ctx.message.author.id)]['restricted'] += 1
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
+                    back = 150
                 elif 959001 <= out_number <= 991000:
                     rarity += "Classified"
                     rarity_color = 0xd55ae6
@@ -498,6 +557,11 @@ class games(commands.Cog):
                     b_file = open("cases_stats.json", "w")
                     json.dump(case_stats, b_file)
                     b_file.close()
+                    inventories[str(ctx.message.author.id)]['classified'] += 1
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
+                    back = 1000
                 elif 991001 <= out_number <= 997400:
                     rarity += "Covert"
                     rarity_color = 0xc44546
@@ -505,6 +569,11 @@ class games(commands.Cog):
                     b_file = open("cases_stats.json", "w")
                     json.dump(case_stats, b_file)
                     b_file.close()
+                    inventories[str(ctx.message.author.id)]['covert'] += 1
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
+                    back = 5000
                 else:
                     rarity += "Rare Legendary Item"
                     rarity_color = 0xFFD700
@@ -512,22 +581,33 @@ class games(commands.Cog):
                     b_file = open("cases_stats.json", "w")
                     json.dump(case_stats, b_file)
                     b_file.close()
+                    inventories[str(ctx.message.author.id)]['rare legendary item'] += 1
+                    final = open("user_inv.json", "w")
+                    json.dump(inventories, final)
+                    final.close()
+                    back = 10000
                 # determine grade
                 out = random.randint(0, 10000)
                 if 0 <= out <= 792:
                     grade += "Well-Worn"
+                    multiplier = 1.05
                 elif 793 <= out <= 1785:
                     grade += "Battle-Scarred"
+                    multiplier = 1
                 elif 1786 <= out <= 6103:
                     grade += "Field-Tested"
+                    multiplier = 1.1
                 elif 6104 <= out <= 8572:
                     grade += "Minimal Wear"
+                    multiplier = 1.25
                 else:
                     grade += "Factory New"
+                    multiplier = 1.5
                 number = random.randint(0, 10000)
                 # decide stat trak
                 if 0 <= number <= 1009:
                     StatTrak = True
+                    multiplier += .5
                 else:
                     StatTrak = False
                 # load the cases
@@ -542,11 +622,27 @@ class games(commands.Cog):
                 # pick out the image url
                 image = cases['cases'][case_name.lower()][rarity.lower()][indexer][str(list(skin_name.keys())[0])][
                     'img_url']
+                new_wallet_amount = back * multiplier
+                rounded = round(new_wallet_amount)
+                money[str(ctx.message.author.id)]['wallet'] += rounded
+                econ_data = open("economy.json", "w")
+                json.dump(money, econ_data)
+                econ_data.close()
                 description = f""
+                percentage1 = multiplier - 1
+                percentage = round(percentage1 * 100)
                 if StatTrak is True:
-                    description += f"StatTrak:tm: {rarity} \n{str(list(skin_name.keys())[0])} \n{grade}"
+                    description += f"StatTrak:tm: {rarity} \n{str(list(skin_name.keys())[0])} \n{grade}\n\n" \
+                                   f"You spent {self.coin}`100` to open this case." \
+                                   f"\nYour skin was {rarity} so you received {self.coin}`{back:,}` back.\n" \
+                                   f"Your skin was also {grade} and StatTrak:tm:, which added a `{percentage}`% " \
+                                   f"multiplier bringing your total money back to {self.coin}`{rounded:,}`."
                 else:
-                    description += f"{rarity} \n{str(list(skin_name.keys())[0])} \n{grade}"
+                    description += f"{rarity} \n{str(list(skin_name.keys())[0])} \n{grade}\n\n" \
+                                   f"You spent {self.coin}`100` to open this case." \
+                                   f"\nYour skin was {rarity} so you received {self.coin}`{back:,}` back.\n" \
+                                   f"Your skin was also {grade} so you received a `{percentage}`% multiplier " \
+                                   f"bringing your total money back to {self.coin}`{rounded:,}`."
                 embed = discord.Embed(color=0xF5F5F5)
                 embed.set_image(url="https://i.imgur.com/igOWNRL.gif")
                 msg = await ctx.send(embed=embed)
@@ -569,7 +665,8 @@ class games(commands.Cog):
                                       "➤ `prisma 2`\n"
                                       "➤ `fracture`\n"
                                       "➤ `operation broken fang`\n"
-                                      "➤ `glove`")
+                                      "➤ `glove`\n"
+                                      "➤ `cs20`")
                 await ctx.send(embed=embed)
 
     @case.command()
@@ -581,12 +678,52 @@ class games(commands.Cog):
                 case_stats['rare legendary item']
         embed = discord.Embed(color=0x5643fd, title="CSGO Case Stats", timestamp=ctx.message.created_at)
         embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
-        embed.add_field(name="Total Cases Opened", inline=False, value=f"➤ `{total}`")
-        embed.add_field(name="Mil-Spec", inline=False, value=f"➤ `{case_stats['mil-spec']}`")
-        embed.add_field(name="Restricted", inline=False, value=f"➤ `{case_stats['restricted']}`")
-        embed.add_field(name="Classified", inline=False, value=f"➤ `{case_stats['classified']}`")
-        embed.add_field(name="Covert", inline=False, value=f"➤ `{case_stats['covert']}`")
-        embed.add_field(name="Rare Legendary Item", inline=False, value=f"➤ `{case_stats['rare legendary item']}`")
+        embed.add_field(name="Total Cases Opened", inline=False, value=f"➤ `{total:,}`")
+        embed.add_field(name="Mil-Spec", inline=False, value=f"➤ `{case_stats['mil-spec']:,}`")
+        embed.add_field(name="Restricted", inline=False, value=f"➤ `{case_stats['restricted']:,}`")
+        embed.add_field(name="Classified", inline=False, value=f"➤ `{case_stats['classified']:,}`")
+        embed.add_field(name="Covert", inline=False, value=f"➤ `{case_stats['covert']:,}`")
+        embed.add_field(name="Rare Legendary Item", inline=False, value=f"➤ `{case_stats['rare legendary item']:,}`")
+        await ctx.send(embed=embed)
+
+    @case.command(aliases=['inv'])
+    async def inventory(self, ctx):
+        """Shows the global stats for case openings."""
+        member = ctx.message.author
+        a_file = open("user_inv.json", "r")
+        case_stats = json.load(a_file)
+        if str(ctx.message.author.id) not in case_stats.keys():
+            return await ctx.send("You have no items in your inventory! Open some cases with `n.case` "
+                                  "to gain some items.")
+        total = case_stats[str(member.id)]['mil-spec'] + \
+                case_stats[str(member.id)]['restricted'] + \
+                case_stats[str(member.id)]['classified'] + \
+                case_stats[str(member.id)]['covert'] + \
+                case_stats[str(member.id)]['rare legendary item']
+        mil = case_stats[str(member.id)]['mil-spec'] * 50
+        res = case_stats[str(member.id)]['restricted'] * 150
+        cla = case_stats[str(member.id)]['classified'] * 1000
+        cov = case_stats[str(member.id)]['covert'] * 5000
+        rar = case_stats[str(member.id)]['rare legendary item'] * 10000
+        money_earned = mil + res + cla + cov + rar
+        percentage = round(((money_earned/(total * 100)) * 100) - 100)
+        embed = discord.Embed(color=0x5643fd, title=f"{member.display_name}'s Inventory",
+                              timestamp=ctx.message.created_at)
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.add_field(name="Inventory Value", inline=False, value=f"➤ Money Spent: {self.coin}`{total * 100:,}`\n"
+                                                                    f"➤ Money Earned: {self.coin}`{money_earned:,}`\n"
+                                                                    f"➤ Profit Margin: `{percentage}%`")
+        embed.add_field(name="Total Cases Opened", inline=False, value=f"➤ `{total:,}`")
+        embed.add_field(name="Mil-Spec", inline=False,
+                        value=f"➤ `{case_stats[str(member.id)]['mil-spec']:,}`")
+        embed.add_field(name="Restricted", inline=False,
+                        value=f"➤ `{case_stats[str(member.id)]['restricted']:,}`")
+        embed.add_field(name="Classified", inline=False,
+                        value=f"➤ `{case_stats[str(member.id)]['classified']:,}`")
+        embed.add_field(name="Covert", inline=False,
+                        value=f"➤ `{case_stats[str(member.id)]['covert']:,}`")
+        embed.add_field(name="Rare Legendary Item", inline=False,
+                        value=f"➤ `{case_stats[str(member.id)]['rare legendary item']:,}`")
         await ctx.send(embed=embed)
 
 
