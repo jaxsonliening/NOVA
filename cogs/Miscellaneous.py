@@ -95,6 +95,21 @@ class miscellaneous(commands.Cog):
         else:
             return
 
+    # messages seen
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message:
+            a_file = open("command_counter.json", "r")
+            json_object = json.load(a_file)
+            a_file.close()
+            json_object["messages_seen"] += 1
+            a_file = open("command_counter.json", "w")
+            json.dump(json_object, a_file)
+            a_file.close()
+            return
+        else:
+            return
+
 
 def setup(client):
     client.add_cog(miscellaneous(client))

@@ -6,6 +6,8 @@ import json
 import io
 import re
 import akinator
+import time
+from time import perf_counter
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
 from secrets import *
@@ -418,7 +420,7 @@ class games(commands.Cog):
                 ms = await self.client.wait_for("message", check=lambda m: m.author == ctx.author, timeout=60)
                 if ms.content.lower() in answers:
                     ques = self.aki.answer(ms.content)
-                    await ctx.send(ques)
+                    await ctx.send(f"**{ctx.message.author.display_name}:**\n{ques}")
                     questions += 1
                     continue
                 elif ms.content.lower() == "stop":
@@ -463,7 +465,8 @@ class games(commands.Cog):
     @commands.group(invoke_without_command=True)
     async def case(self, ctx, *, case_name: str = None):
         """Open a CSGO case."""
-        case_list = ['danger zone', 'prisma', 'fracture', 'operation broken fang', 'prisma 2', 'glove', 'cs20']
+        case_list = ['danger zone', 'prisma', 'fracture', 'operation broken fang', 'prisma 2', 'glove', 'cs20',
+                     'spectrum']
         if not case_name:
             embed = discord.Embed(title="CSGO CASES", color=0x5643fd, timestamp=ctx.message.created_at,
                                   description="Here is a list of all available cases to open at the moment. "
@@ -481,7 +484,8 @@ class games(commands.Cog):
                                   "➤ fracture\n"
                                   "➤ operation broken fang\n"
                                   "➤ glove\n"
-                                  "➤ cs20")
+                                  "➤ cs20\n"
+                                  "➤ spectrum")
             embed.add_field(name="Chances", inline=False,
                             value="➤ Mil-Spec (Blue) - 79.92%\n"
                                   "➤ Restricted (Purple) - 15.96%\n"
@@ -666,7 +670,8 @@ class games(commands.Cog):
                                       "➤ `fracture`\n"
                                       "➤ `operation broken fang`\n"
                                       "➤ `glove`\n"
-                                      "➤ `cs20`")
+                                      "➤ `cs20`\n"
+                                      "➤ `spectrum`")
                 await ctx.send(embed=embed)
 
     @case.command()
@@ -676,8 +681,18 @@ class games(commands.Cog):
         case_stats = json.load(a_file)
         total = case_stats['mil-spec'] + case_stats['restricted'] + case_stats['classified'] + case_stats['covert'] + \
                 case_stats['rare legendary item']
+        mil = case_stats['mil-spec'] * 50
+        res = case_stats['restricted'] * 150
+        cla = case_stats['classified'] * 1000
+        cov = case_stats['covert'] * 5000
+        rar = case_stats['rare legendary item'] * 10000
+        money_earned = mil + res + cla + cov + rar
+        percentage = round(((money_earned / (total * 100)) * 100) - 100)
         embed = discord.Embed(color=0x5643fd, title="CSGO Case Stats", timestamp=ctx.message.created_at)
         embed.set_thumbnail(url="https://imgur.com/INmWt3O.png")
+        embed.add_field(name="Spending Stats", inline=False, value=f"➤ Money Spent: {self.coin}`{total * 100:,}`\n"
+                                                                   f"➤ Money Earned: {self.coin}`{money_earned:,}`\n"
+                                                                   f"➤ Profit Margin: `{percentage}%`")
         embed.add_field(name="Total Cases Opened", inline=False, value=f"➤ `{total:,}`")
         embed.add_field(name="Mil-Spec", inline=False, value=f"➤ `{case_stats['mil-spec']:,}`")
         embed.add_field(name="Restricted", inline=False, value=f"➤ `{case_stats['restricted']:,}`")
@@ -687,14 +702,16 @@ class games(commands.Cog):
         await ctx.send(embed=embed)
 
     @case.command(aliases=['inv'])
-    async def inventory(self, ctx):
+    async def inventory(self, ctx, user: discord.Member = None):
         """Shows the global stats for case openings."""
-        member = ctx.message.author
+        member = user or ctx.message.author
         a_file = open("user_inv.json", "r")
         case_stats = json.load(a_file)
         if str(ctx.message.author.id) not in case_stats.keys():
             return await ctx.send("You have no items in your inventory! Open some cases with `n.case` "
                                   "to gain some items.")
+        elif str(member.id) not in case_stats.keys() and member.id != ctx.message.author.id:
+            return await ctx.send("This user does not have any items in their inventory!")
         total = case_stats[str(member.id)]['mil-spec'] + \
                 case_stats[str(member.id)]['restricted'] + \
                 case_stats[str(member.id)]['classified'] + \
@@ -706,7 +723,7 @@ class games(commands.Cog):
         cov = case_stats[str(member.id)]['covert'] * 5000
         rar = case_stats[str(member.id)]['rare legendary item'] * 10000
         money_earned = mil + res + cla + cov + rar
-        percentage = round(((money_earned/(total * 100)) * 100) - 100)
+        percentage = round(((money_earned / (total * 100)) * 100) - 100)
         embed = discord.Embed(color=0x5643fd, title=f"{member.display_name}'s Inventory",
                               timestamp=ctx.message.created_at)
         embed.set_thumbnail(url=member.avatar_url)
@@ -725,6 +742,52 @@ class games(commands.Cog):
         embed.add_field(name="Rare Legendary Item", inline=False,
                         value=f"➤ `{case_stats[str(member.id)]['rare legendary item']:,}`")
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['type'])
+    async def typing(self, ctx):
+        """Test your typing skills with this fun and interactive game."""
+        sentence = random.choice(sentences)
+        word_count = len(sentence.split())
+        embed = discord.Embed(title="Welcome to Typing Test", color=0x5643fd, timestamp=ctx.message.created_at,
+                              description="The game will be starting in `5` seconds. Get ready!")
+        embed.add_field(name="Directions", value="You will be sent a random sentence and it is yo"
+                                                 "ur duty to type back the "
+                                                 "sentence as quick as possible with as few mistakes as possible.",
+                        inline=False)
+        embed.add_field(name="Rules", value="Be warned: punctuation and spelling DO matter.", inline=False)
+        await ctx.send(embed=embed)
+        await asyncio.sleep(5)
+        await ctx.send("**3...**")
+        await asyncio.sleep(1)
+        await ctx.send("**2...**")
+        await asyncio.sleep(1)
+        await ctx.send("**1...**")
+        await asyncio.sleep(1)
+        await ctx.send("**GO**")
+        await asyncio.sleep(1)
+        await ctx.send(sentence)
+        try:
+            start = perf_counter()
+            msg = await self.client.wait_for('message', timeout=60, check=lambda x: x.author == ctx.author)
+            user_characters = list(msg.content)
+            characters = list(sentence)
+            maximum = range(0, len(characters))
+            correct = 0
+            for indexer in maximum:
+                try:
+                    if user_characters[indexer] == characters[indexer]:
+                        correct += 1
+                except IndexError:
+                    pass
+            accuracy = correct/len(characters) * 100
+            stop = perf_counter()
+            total = round(stop - start)
+            part_of_minute = total / 60
+            await ctx.send(f"<:clock:738186842343735387> Time: `{total}` seconds\n"
+                           f"<:star:737736250718421032> Speed: `{round(word_count / part_of_minute)}` WPM\n"
+                           f"<:license:738176207895658507> Accuracy: `{round(accuracy)}`%")
+        except asyncio.TimeoutError:
+            await ctx.send("You took over a minute to send your sentence back so the process was abandoned.")
 
 
 case_json_template = """

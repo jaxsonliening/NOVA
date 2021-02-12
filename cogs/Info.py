@@ -189,7 +189,8 @@ class info(commands.Cog):
                               f' total users (`{unique}` unique)\n'
                               f'**•** ``{y}`` available emojis\n'
                               f'**•** ``{parsed_channels}`` channels\n'
-                              f'**•** ``{parsed_commands_run}`` commands run', inline=False)
+                              f'**•** ``{parsed_commands_run}`` commands run\n'
+                              f'**•** ``{json_object["messages_seen"]:,}`` messages seen', inline=False)
         embed.add_field(name='Code', value=f'**•** ``{len(self.client.commands)}`` commands with '
                                            f'``{len(self.client.cogs)}`` cogs\n'
                                            f"**•** `{lines.get('lines'):,}` lines of code with "

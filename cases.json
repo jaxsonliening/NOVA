@@ -153,6 +153,28 @@
       "rare legendary item": [{"Classic Knife | Stained": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_aq_forced_light_large.7f67fec75394666e6df6aa8a31aa492d4540fc94.png"}},
                               {"Classic Knife | Fade": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_aa_fade_light_large.f39aed45b6599c0e5850cb948b81f45268febc83.png"}},
                               {"Classic Knife | Slaughter": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_am_zebra_light_large.ae26f920f022f2dc8d700bba2dee4e7003552a4b.png"}}]
+    },
+    "spectrum": {
+      "mil-spec": [{"PP-Bizon | Jungle Slipstream": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_bizon_hy_bizon_torn_green_light_large.1aa076ede6a2511bf676ffb1c5a3eafca71c58a6.png"}},
+                   {"MP7 | Akoben": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp7_sp_mp7_tribal_yellow_light_large.1c05d27487feb5d82e8165721942ea3a67e6ba33.png"}},
+                   {"Sawed-Off | Zander": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_sawedoff_aq_sawedoff_zander2_light_large.514f7c6c606296838f56020877d7762c594dc4bd.png"}},
+                   {"P250 | Ripple": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p250_am_p250_sputnik_light_large.38766530975aaa4006dda7a24533ac1b05a6b6a8.png"}},
+                   {"SCAR-20 | Blueprint": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_scar20_cu_blueprint_scar_light_large.9a71e8191c2b2081f5fd3884f57f919663b26ee5.png"}},
+                   {"Five-SeveN | Capillary": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_fiveseven_cu_fiveseven_vein_light_large.464ec691b3c3c9c828aa1a8d4e2b076daa4b7a4f.png"}},
+                   {"Desert Eagle | Oxide Blaze": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_cu_desert_eagle_corroden_light_large.5fde2cc1c9b82b0e9823445c7fb2be334bc286af.png"}}],
+      "restricted": [{"Galil AR | Crimson Tsunami": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_galilar_sp_galil_wave_light_large.0a4761ebb660428a77a622885054e1c44cf03959.png"}},
+                     {"MAC-10 | Last Dive": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mac10_aa_mac10_the_last_dive_light_large.d0039a83384acbe26f9337c8a83e81f6410b7dc9.png"}},
+                     {"UMP-45 | Scaffold": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ump45_gs_ump_abyss_light_large.55910298a6be9b071156ef176a31d26007d92d0f.png"}},
+                     {"M249 | Emerald Poison Dart": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m249_sp_m249_frog_original_light_large.7331eb3d676ebdf8df71adb58b43aea63660f785.png"}},
+                     {"XM1014 | Seasons": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_xm1014_aq_xm_leaf_fade_light_large.f753b1b710a8023e299d1918ca150b42483ca1cd.png"}}],
+      "classified": [{"CZ75-Auto | Xiangliu": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_cz75a_gs_cz_snakes_purple_light_large.a06599fab1d73352fd970fc0356c215c50ca7e9a.png"}},
+                     {"AWP | Fever Dream": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_psychopath_light_large.11e54a670b779e1757cce18ea252d70eb35c6a75.png"}},
+                     {"M4A1-S | Decimator": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_silencer_gs_m4a1_decimator_light_large.5af82e99273fcc0a4ad35b2971b63787ee989d6a.png"}}],
+      "covert": [{"AK-47 | Bloodsport": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_gs_ak47_bloodsport_light_large.40f076f6b92e08acc37860923533aa9768795b2b.png"}},
+                 {"USP-S | Neo-Noir": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_usp_silencer_cu_usps_noir_light_large.ed0f4245c1b9031c6d410300ce6de1f1efb75481.png"}}],
+      "rare legendary item": [{"Huntsman Knife | Doppler": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_tactical_am_doppler_phase1_light_large.07b42e9787a77143df3cafe19202ba9ba7d90706.png"}},
+                              {"Bowie Knife | Doppler": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_survival_bowie_am_doppler_phase1_light_large.0885508f274028c4fb173666aaf019f448955904.png"}},
+                              {"Butterfly Knife | Tiger Tooth": {"img_url": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_butterfly_an_tiger_orange_light_large.2fece0b06a84ce2bb6e15e7cd3a37f400f218940.png"}}]
     }
   }
 }

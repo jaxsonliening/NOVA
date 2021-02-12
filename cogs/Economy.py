@@ -46,8 +46,8 @@ class economy(commands.Cog):
             bank_amount = money[str(user.id)]['bank']
             embed = discord.Embed(title=f"{user.display_name}'s Balance", color=0x5643fd,
                                   timestamp=ctx.message.created_at)
-            embed.add_field(name="Wallet Amount", value=f"{self.coin}`{wallet_amount}`", inline=False)
-            embed.add_field(name="Bank Amount", value=f"{self.coin}`{bank_amount}`", inline=False)
+            embed.add_field(name="Wallet Amount", value=f"{self.coin}`{wallet_amount:,}`", inline=False)
+            embed.add_field(name="Bank Amount", value=f"{self.coin}`{bank_amount:,}`", inline=False)
             embed.set_thumbnail(url=user.avatar_url)
             return await ctx.send(embed=embed)
 
@@ -69,8 +69,8 @@ class economy(commands.Cog):
                 econ_data = open("economy.json", "w")
                 json.dump(money, econ_data)
                 econ_data.close()
-                return await ctx.send(f"{self.coin}`{new_amount}` has been deposited into your bank.\n"
-                                      f"Your new bank balance is {self.coin}`{bank_amount}`.")
+                return await ctx.send(f"{self.coin}`{new_amount:,}` has been deposited into your bank.\n"
+                                      f"Your new bank balance is {self.coin}`{bank_amount:,}`.")
             try:
                 amount = int(deposit_amount)
                 if amount > money[str(ctx.message.author.id)]['wallet']:
@@ -87,8 +87,8 @@ class economy(commands.Cog):
                     econ_data = open("economy.json", "w")
                     json.dump(money, econ_data)
                     econ_data.close()
-                    return await ctx.send(f"{self.coin}`{amount}` has been deposited into your bank.\n"
-                                          f"Your new bank balance is {self.coin}`{bank_amount}`.")
+                    return await ctx.send(f"{self.coin}`{amount:,}` has been deposited into your bank.\n"
+                                          f"Your new bank balance is {self.coin}`{bank_amount:,}`.")
             except ValueError:
                 return await ctx.send("Only numbers can be used to deposit.")
 
@@ -110,8 +110,8 @@ class economy(commands.Cog):
                 econ_data = open("economy.json", "w")
                 json.dump(money, econ_data)
                 econ_data.close()
-                return await ctx.send(f"{self.coin}`{new_amount}` has been added to your wallet.\n"
-                                      f"Your new wallet balance is {self.coin}`{wallet_amount}`.")
+                return await ctx.send(f"{self.coin}`{new_amount:,}` has been added to your wallet.\n"
+                                      f"Your new wallet balance is {self.coin}`{wallet_amount:,}`.")
             try:
                 amount = int(withdraw_amount)
                 if amount > money[str(ctx.message.author.id)]['bank']:
@@ -128,8 +128,8 @@ class economy(commands.Cog):
                     econ_data = open("economy.json", "w")
                     json.dump(money, econ_data)
                     econ_data.close()
-                    return await ctx.send(f"{self.coin}`{amount}` has been moved to your wallet.\n"
-                                          f"Your new wallet balance is {self.coin}`{wallet_amount}`.")
+                    return await ctx.send(f"{self.coin}`{amount:,}` has been moved to your wallet.\n"
+                                          f"Your new wallet balance is {self.coin}`{wallet_amount:,}`.")
             except ValueError:
                 return await ctx.send("Only numbers can be used to withdraw.")
 
@@ -150,6 +150,102 @@ class economy(commands.Cog):
             json.dump(money, econ_data)
             econ_data.close()
             return await ctx.send(f"A {random.choice(person)} gave you {self.coin}`{gift}` for your wallet.")
+
+    @commands.command()
+    @commands.cooldown(1, 3600, commands.BucketType.user)
+    async def timely(self, ctx):
+        """Claim your free money."""
+        econ_data = open("economy.json", "r")
+        money = json.load(econ_data)
+        econ_data.close()
+        if str(ctx.message.author.id) not in money.keys():
+            return await ctx.send("You haven't created an account yet! Run `n.create` to do so.")
+        else:
+            money[str(ctx.message.author.id)]['wallet'] += 250
+            econ_data = open("economy.json", "w")
+            json.dump(money, econ_data)
+            econ_data.close()
+            return await ctx.send(f"{self.coin}`250` has been added to your balance. \n"
+                                  f"Check back in 1 hour to claim it again!")
+
+    @commands.command(aliases=['bet', 'wager'])
+    async def roll(self, ctx, amount):
+        """Bet all of your money away."""
+        econ_data = open("economy.json", "r")
+        money = json.load(econ_data)
+        econ_data.close()
+        try:
+            if str(ctx.message.author.id) not in money.keys():
+                return await ctx.send("You haven't created an account yet! Run `n.create` to do so.")
+            else:
+                if amount == 'all':
+                    wager_amount = money[str(ctx.message.author.id)]['wallet']
+                    if money[str(ctx.message.author.id)]['wallet'] < 100:
+                        return await ctx.send(f"You must have at least {self.coin}`100` in your wallet to play.")
+                    roll = random.randint(0, 100)
+                    if 0 <= roll <= 33:
+                        money[str(ctx.message.author.id)]['wallet'] -= wager_amount
+                        ret = f'You rolled `{roll}` so you lost all of your wager.'
+                        gain = f"{self.coin}`{wager_amount:,}` has been deducted from your balance."
+                        econ_data = open("economy.json", "w")
+                        json.dump(money, econ_data)
+                        econ_data.close()
+                    elif 66 <= roll <= 100:
+                        money[str(ctx.message.author.id)]['wallet'] += wager_amount
+                        ret = f'You rolled `{roll}` so your wager was doubled. Congratulations!'
+                        gain = f"{self.coin}`{wager_amount:,}` has been added to your balance."
+                        econ_data = open("economy.json", "w")
+                        json.dump(money, econ_data)
+                        econ_data.close()
+                    else:
+                        ret = f"You rolled `{roll}` so you did not lose or gain any money."
+                        gain = f"{self.coin}`0` has been added to your balance."
+                    embed = discord.Embed(color=0x5643fd, title=f"You rolled {roll}",
+                                          timestamp=ctx.message.created_at,
+                                          description=f"➤ Rolling a `33` and below loses all of your wager\n"
+                                                      f"➤ Rolling a `66` and above doubles your wager\n"
+                                                      f"➤ Rolling a `34-65` loses you nothing")
+                    embed.add_field(name="Your Returns", inline=False,
+                                    value=f"{ret}\n{gain}\nYou now have a wallet balance of "
+                                          f"{self.coin}`{money[str(ctx.message.author.id)]['wallet']:,}`")
+                    embed.set_thumbnail(url="https://imgur.com/dTY0Cvv.png")
+                    await ctx.send(embed=embed)
+                else:
+                    wager_amount = int(amount)
+                    if wager_amount >= money[str(ctx.message.author.id)]['wallet']:
+                        return await ctx.send("You cannot bet more than you have in your wallet")
+                    elif money[str(ctx.message.author.id)]['wallet'] < 100:
+                        return await ctx.send(f"You must have at least {self.coin}`100` in your wallet to play.")
+                    roll = random.randint(0, 100)
+                    if 0 <= roll <= 33:
+                        money[str(ctx.message.author.id)]['wallet'] -= wager_amount
+                        ret = f'You rolled `{roll}` so you lost all of your wager.'
+                        gain = f"{self.coin}`{wager_amount:,}` has been deducted from your balance."
+                        econ_data = open("economy.json", "w")
+                        json.dump(money, econ_data)
+                        econ_data.close()
+                    elif 66 <= roll <= 100:
+                        money[str(ctx.message.author.id)]['wallet'] += wager_amount
+                        ret = f'You rolled `{roll}` so your wager was doubled. Congratulations!'
+                        gain = f"{self.coin}`{wager_amount:,}` has been added to your balance."
+                        econ_data = open("economy.json", "w")
+                        json.dump(money, econ_data)
+                        econ_data.close()
+                    else:
+                        ret = f"You rolled `{roll}` so you did not lose or gain any money."
+                        gain = f"{self.coin}`0` has been added to your balance."
+                    embed = discord.Embed(color=0x5643fd, title=f"You rolled {roll}",
+                                          timestamp=ctx.message.created_at,
+                                          description=f"➤ Rolling a `33` and below loses all of your wager\n"
+                                                      f"➤ Rolling a `66` and above doubles your wager\n"
+                                                      f"➤ Rolling a `34-65` loses you nothing")
+                    embed.add_field(name="Your Returns", inline=False,
+                                    value=f"{ret}\n{gain}\nYou now have a wallet balance of "
+                                          f"{self.coin}`{money[str(ctx.message.author.id)]['wallet']:,}`")
+                    embed.set_thumbnail(url="https://imgur.com/dTY0Cvv.png")
+                    await ctx.send(embed=embed)
+        except ValueError:
+            return await ctx.send("You can only bet with numbers!")
 
 
 def setup(client):
