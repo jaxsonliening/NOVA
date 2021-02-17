@@ -470,6 +470,6 @@ sentences = ["It's not often you find a soggy banana on the street.",
              'There are few things better in life than a slice of pie.',
              'The truth is that you pay for your lifestyle in hours.',
              'Their argument could be heard across the parking lot.',
-             "His confidence would have bee admirable if it wasn't for his stupidity.",
+             "His confidence would have been admirable if it wasn't for his stupidity.",
              'He learned the hardest lesson of his life and had the scars, both physical and mental, to prove it.',
              'Lucifer was surprised at the amount of life at Death Valley.']

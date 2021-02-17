@@ -5,7 +5,11 @@ import asyncio
 import datetime
 import string
 import json
-from discord.ext import commands
+import time
+from discord.ext import tasks, commands
+
+commando = open("command_counter.json", "r")
+counter = json.load(commando)
 
 
 class miscellaneous(commands.Cog):
@@ -13,6 +17,7 @@ class miscellaneous(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+        self.commands_and_messages.start()
 
     @commands.command()
     async def invite(self, ctx):
@@ -83,32 +88,19 @@ class miscellaneous(commands.Cog):
     # Command Counter
     @commands.Cog.listener()
     async def on_command(self, ctx):
-        if ctx.message.author != 709922850953494598:
-            a_file = open("command_counter.json", "r")
-            json_object = json.load(a_file)
-            a_file.close()
-            json_object["total_commands_run"] += 1
-            a_file = open("command_counter.json", "w")
-            json.dump(json_object, a_file)
-            a_file.close()
-            return
-        else:
-            return
+        counter['total_commands_run'] += 1
+        commando.close()
 
-    # messages seen
+    # Messages Seen
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message:
-            a_file = open("command_counter.json", "r")
-            json_object = json.load(a_file)
-            a_file.close()
-            json_object["messages_seen"] += 1
-            a_file = open("command_counter.json", "w")
-            json.dump(json_object, a_file)
-            a_file.close()
-            return
-        else:
-            return
+        counter['messages_seen'] += 1
+        commando.close()
+
+    @tasks.loop(seconds=60.0)
+    async def commands_and_messages(self):
+        json.dump(counter, open('command_counter.json', 'w'))
+        return
 
 
 def setup(client):

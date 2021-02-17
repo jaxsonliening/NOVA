@@ -754,7 +754,7 @@ class games(commands.Cog):
                                                  "ur duty to type back the "
                                                  "sentence as quick as possible with as few mistakes as possible.",
                         inline=False)
-        embed.add_field(name="Rules", value="Be warned: punctuation and spelling DO matter.", inline=False)
+        embed.add_field(name="Rules", value="Be warned: punctuation, capitalization, and spelling DO matter.", inline=False)
         await ctx.send(embed=embed)
         await asyncio.sleep(5)
         await ctx.send("**3...**")
@@ -788,6 +788,8 @@ class games(commands.Cog):
                            f"<:license:738176207895658507> Accuracy: `{round(accuracy)}`%")
         except asyncio.TimeoutError:
             await ctx.send("You took over a minute to send your sentence back so the process was abandoned.")
+        except ZeroDivisionError:
+            await ctx.send("Lmao you are so bad at typing that you got a zero percent accuracy.")
 
 
 case_json_template = """

@@ -2,7 +2,7 @@ import discord
 import os
 import asyncio
 from secrets import token
-from discord.ext import commands
+from discord.ext import tasks, commands
 from itertools import cycle
 
 intents = discord.Intents.all()
@@ -14,10 +14,7 @@ status = [f'n.help | {"{:,}".format(len(client.users))} users']
 @client.event
 async def on_ready():
     print('NOVA is online')
-    total_members = 0
-    for guild in client.guilds:
-        total_members += guild.member_count
-    await client.change_presence(activity=discord.Game(name=f'n.help | {"{:,}".format(total_members)} users'))
+    member_counts.start()
 
 
 errorurl = 'https://media.discordapp.net/attachments/726475732569555014/745738546660245664/vsPV_ipxVKfJKE3xJGvJZeX' \
@@ -79,6 +76,14 @@ async def on_command_error(ctx, error):
         embed.set_thumbnail(url=errorurl)
         await ctx.send(embed=embed)
         raise error
+
+
+@tasks.loop(seconds=300.0)
+async def member_counts():
+    total_members = 0
+    for guild in client.guilds:
+        total_members += guild.member_count
+    await client.change_presence(activity=discord.Game(name=f'n.help | {"{:,}".format(total_members)} users'))
 
 
 for filename in os.listdir('cogs'):
