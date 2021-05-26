@@ -396,7 +396,7 @@ class math(commands.Cog):
             await ctx.send("You did not enter a number!")
 
     @commands.group(invoke_without_command=True, aliases=['pythagoras', 'pyth'])
-    async def pythagorean(self, ctx, a: int = 1, b: int = 1):
+    async def pythagorean(self, ctx, a: float = 1, b: float = 1):
         """Find the hypotenuse of a right triangle."""
         try:
             a_squared = a * a
@@ -417,7 +417,7 @@ class math(commands.Cog):
             await ctx.send("You didn't enter a number!")
 
     @pythagorean.command()
-    async def c(self, ctx, c: int = 1, a: int = 1):
+    async def c(self, ctx, c: float = 1, a: float = 1):
         """Find the side length of a right triangle given a side length and hypotenuse."""
         try:
             if a > c:

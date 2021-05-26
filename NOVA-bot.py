@@ -1,6 +1,8 @@
 import discord
 import os
 import asyncio
+import requests
+import json
 from secrets import token
 from discord.ext import tasks, commands
 from itertools import cycle

@@ -791,29 +791,28 @@ class games(commands.Cog):
         except ZeroDivisionError:
             await ctx.send("Lmao you are so bad at typing that you got a zero percent accuracy.")
 
-
-case_json_template = """
- "mil-spec": [{"": {"img_url": ""}},
-                   {"": {"img_url": ""}},
-                   {"": {"img_url": ""}},
-                   {"": {"img_url": ""}},
-                   {"": {"img_url": ""}},
-                   {"": {"img_url": ""}},
-                   {"": {"img_url": ""}}],
-      "restricted": [{"": {"img_url": ""}},
-                     {"": {"img_url": ""}},
-                     {"": {"img_url": ""}},
-                     {"": {"img_url": ""}},
+    case_json_template = """
+     "mil-spec": [{"": {"img_url": ""}},
+                       {"": {"img_url": ""}},
+                       {"": {"img_url": ""}},
+                       {"": {"img_url": ""}},
+                       {"": {"img_url": ""}},
+                       {"": {"img_url": ""}},
+                       {"": {"img_url": ""}}],
+          "restricted": [{"": {"img_url": ""}},
+                         {"": {"img_url": ""}},
+                         {"": {"img_url": ""}},
+                         {"": {"img_url": ""}},
+                         {"": {"img_url": ""}}],
+          "classified": [{"": {"img_url": ""}},
+                         {"": {"img_url": ""}},
+                         {"": {"img_url": ""}}],
+          "covert": [{"": {"img_url": ""}},
                      {"": {"img_url": ""}}],
-      "classified": [{"": {"img_url": ""}},
-                     {"": {"img_url": ""}},
-                     {"": {"img_url": ""}}],
-      "covert": [{"": {"img_url": ""}},
-                 {"": {"img_url": ""}}],
-      "rare legendary item": [{"": {"img_url": ""}},
-                              {"": {"img_url": ""}},
-                              {"": {"img_url": ""}}]
-"""
+          "rare legendary item": [{"": {"img_url": ""}},
+                                  {"": {"img_url": ""}},
+                                  {"": {"img_url": ""}}]
+    """
 
 
 def setup(client):

@@ -5,11 +5,14 @@ import asyncio
 import datetime
 import string
 import json
+import datetime
 import time
+import pyshorteners
 from discord.ext import tasks, commands
 
 commando = open("command_counter.json", "r")
 counter = json.load(commando)
+s = pyshorteners.Shortener()
 
 
 class miscellaneous(commands.Cog):
@@ -101,6 +104,16 @@ class miscellaneous(commands.Cog):
     async def commands_and_messages(self):
         json.dump(counter, open('command_counter.json', 'w'))
         return
+
+    @commands.command(aliases=['shorten_url', 'url_shorten'])
+    async def shorten(self, ctx, url: str):
+        """Shorten URLs to something much more appealing."""
+        try:
+            await ctx.send(s.tinyurl.short(url))
+        except s.exceptions.BadAPIResponseException():
+            await ctx.send("There was an error generating a url <:doge:833201532836773938>")
+        except s.exceptions.BadURLException():
+            await ctx.send("That isn't a url <:doge:833201532836773938>")
 
 
 def setup(client):

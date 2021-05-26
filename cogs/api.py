@@ -5,6 +5,8 @@ import asyncio
 import io
 import re
 import wikipedia
+import json
+import requests
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
 from secrets import *
