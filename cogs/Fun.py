@@ -4,12 +4,14 @@ import random
 import asyncio
 import io
 import re
+import textwrap
 import wikipedia
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
 from secrets import *
 from random import randint, choice, sample
 from big_lists import *
+from PIL import Image, ImageDraw, ImageSequence, ImageFont
 
 ZALGO_DEFAULT_AMT = 3
 ZALGO_MAX_AMT = 7
@@ -185,6 +187,64 @@ class fun(commands.Cog):
         topic = random.choice(topics)
         embed = discord.Embed(title="💬 Topic", timestamp=ctx.message.created_at, color=0x5643fd, description=topic)
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['1984'])
+    async def _1984(self, ctx):
+        """Make your own 1984 meme."""
+        try:
+            # defining variables
+
+            im = Image.open('/Users/jaxson/PycharmProjects/NOVABOT/1984.gif')
+            image_width, image_height = im.size
+            font = ImageFont.truetype(font='/Users/jaxson/library/Fonts/impact.ttf', size=int(image_height/10))
+
+            # messages lol
+
+            message1 = await ctx.send("💬 What will the top line say?")
+            msg = await self.client.wait_for('message', timeout=60, check=lambda v: v.author == ctx.author)
+            top_text = str(msg.content).upper()
+            message2 = await ctx.send("💬 What will the bottom line say?")
+            msg2 = await self.client.wait_for('message', timeout=60, check=lambda z: z.author == ctx.author)
+            bottom_text = str(msg2.content).upper()
+            message = await ctx.send("Please wait while your meme is being created")
+            await message1.delete()
+            await message2.delete()
+
+            # sizing stuff
+
+            char_width, char_height = font.getsize('A')
+            chars_per_line = image_width // char_width
+            top_lines = textwrap.wrap(top_text, width=chars_per_line)
+            bottom_lines = textwrap.wrap(bottom_text, width=chars_per_line)
+
+            # actually making the thingy
+
+            frames = []
+            for frame in ImageSequence.Iterator(im):
+                d = ImageDraw.Draw(frame)
+                y = 10
+                for line in top_lines:
+                    line_width, line_height = font.getsize(line)
+                    x = (image_width - line_width)/2
+                    d.text((x, y), line, fill='white', font=font)
+                    y += line_height
+                y = image_height - char_height + len(bottom_lines) - 15
+                for line in bottom_lines:
+                    line_width, line_height = font.getsize(line)
+                    x = (image_width - line_width)/2
+                    d.text((x, y), line, fill='white', font=font)
+                    y += line_height
+                del d
+                b = io.BytesIO()
+                frame.save(b, format="GIF")
+                frame = Image.open(b)
+                frames.append(frame)
+            frames[0].save('out.gif', save_all=True, append_images=frames[1:])
+            await ctx.send(file=discord.File('out.gif'))
+            await message.delete()
+        except Exception as e:
+            print(e)
+            pass
 
 
 def setup(client):
