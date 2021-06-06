@@ -196,7 +196,8 @@ class fun(commands.Cog):
 
             im = Image.open('/Users/jaxson/PycharmProjects/NOVABOT/1984.gif')
             image_width, image_height = im.size
-            font = ImageFont.truetype(font='/Users/jaxson/library/Fonts/impact.ttf', size=int(image_height/10))
+            font = ImageFont.truetype(font='/Users/jaxson/downloads/Impact-Font/unicode.impact.ttf',
+                                      size=int(image_height/10))
 
             # messages lol
 
@@ -221,29 +222,38 @@ class fun(commands.Cog):
 
             frames = []
             for frame in ImageSequence.Iterator(im):
+                frame = frame.convert('RGB')
                 d = ImageDraw.Draw(frame)
                 y = 10
                 for line in top_lines:
                     line_width, line_height = font.getsize(line)
                     x = (image_width - line_width)/2
-                    d.text((x, y), line, fill='white', font=font)
+                    d.text((x, y), line, fill=(255, 255, 255), font=font, stroke_width=3, stroke_fill=(0, 0, 0))
                     y += line_height
-                y = image_height - char_height + len(bottom_lines) - 15
+                if len(bottom_lines) == 1:
+                    y = image_height - char_height + len(bottom_lines) - 15
+                elif len(bottom_lines) == 2:
+                    y = image_height - char_height + len(bottom_lines) - 40
+                else:
+                    y = image_height - char_height + len(bottom_lines) - 65
                 for line in bottom_lines:
                     line_width, line_height = font.getsize(line)
                     x = (image_width - line_width)/2
-                    d.text((x, y), line, fill='white', font=font)
-                    y += line_height
-                del d
+                    d.text((x, y), line, fill=(255, 255, 255), font=font, stroke_width=3, stroke_fill=(0, 0, 0))
+                    y += (line_height + 5)
                 b = io.BytesIO()
                 frame.save(b, format="GIF")
                 frame = Image.open(b)
                 frames.append(frame)
+            frames.remove(frames[0])
             frames[0].save('out.gif', save_all=True, append_images=frames[1:])
             await ctx.send(file=discord.File('out.gif'))
             await message.delete()
-        except Exception as e:
-            print(e)
+        except Exception:
+            embed = discord.Embed(title="There was an error with this command.", color=0xFF0000,
+                                  description="Try the command again or use different text.",
+                                  timestamp=ctx.message.created_at)
+            await ctx.send(embed=embed)
             pass
 
 
