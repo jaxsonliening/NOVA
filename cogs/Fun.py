@@ -229,7 +229,7 @@ class fun(commands.Cog):
                     line_width, line_height = font.getsize(line)
                     x = (image_width - line_width)/2
                     d.text((x, y), line, fill=(255, 255, 255), font=font, stroke_width=3, stroke_fill=(0, 0, 0))
-                    y += line_height
+                    y += line_height + 10
                 if len(bottom_lines) == 1:
                     y = image_height - char_height + len(bottom_lines) - 15
                 elif len(bottom_lines) == 2:
@@ -240,7 +240,7 @@ class fun(commands.Cog):
                     line_width, line_height = font.getsize(line)
                     x = (image_width - line_width)/2
                     d.text((x, y), line, fill=(255, 255, 255), font=font, stroke_width=3, stroke_fill=(0, 0, 0))
-                    y += (line_height + 5)
+                    y += line_height + 10
                 b = io.BytesIO()
                 frame.save(b, format="GIF")
                 frame = Image.open(b)
