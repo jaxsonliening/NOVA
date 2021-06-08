@@ -7,6 +7,7 @@ import io
 import re
 import akinator
 import time
+import asyncpraw
 from time import perf_counter
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
@@ -19,11 +20,18 @@ from big_lists import *
 class games(commands.Cog):
     """Play games in your server"""
 
-    def __init__(self, client):
+    def __init__(self, client, reddit):
         self.client = client
         self.trivia = TriviaClient()
         self.aki = akinator.Akinator()
         self.coin = "<:coin:781367758612725780>"
+        self.reddit = reddit
+
+    reddit = asyncpraw.Reddit(client_id=reddit_client_id,
+                              client_secret=reddit_client_secret,
+                              username=reddit_username,
+                              password=reddit_password,
+                              user_agent=reddit_user_agent)
 
     @commands.command(aliases=['mm'])
     async def mastermind(self, ctx):
@@ -814,6 +822,56 @@ class games(commands.Cog):
                                   {"": {"img_url": ""}}]
     """
 
+    @commands.command()
+    async def guessreddit(self, ctx, subreddit):
+        try:
+            subreddit_list = ["holup", "dankmemes"]
+            listed = ", ".join(str(sub) for sub in subreddit_list)
+            if subreddit not in subreddit_list:
+                return await ctx.send(f"That subreddit is not available for this game. "
+                                      f"\nThe current available subreddits are `{listed}`.")
+            posts = []
+            sub = await self.reddit.subreddit(subreddit, fetch=True)
+            async for submission in sub.top("day", limit=50):
+                if not submission.stickied:
+                    posts.append(str(submission.id))
+            random.shuffle(posts)
+            final_ids = random.sample(posts, 2)
+            post1 = await self.reddit.submission(id=final_ids[0])
+            post2 = await self.reddit.submission(id=final_ids[1])
+            await ctx.send("Can you figure out which post got more upvotes? Look at each image and send "
+                           "`1` or `2` in chat"
+                           " to confirm your guess.")
+            embed1 = discord.Embed(title="Image 1", color=0x5643fd)
+            embed1.set_image(url=post1.url)
+            await ctx.send(embed=embed1)
+            embed2 = discord.Embed(title="Image 2", color=0x5643fd)
+            embed2.set_image(url=post2.url)
+            await ctx.send(embed=embed2)
+            score1 = "{:,}".format(post1.score)
+            score2 = "{:,}".format(post2.score)
+            message = await self.client.wait_for('message', check=lambda x: x.author == ctx.message.author, timeout=60)
+            if int(post1.score) > int(post2.score) and message.content == '1':
+                await ctx.send(f"Congratulations! `1` was the correct answer with {score1} upvotes. Image 2 "
+                               f"only had {score2} upvotes.")
+            elif int(post1.score) < int(post2.score) and message.content == '2':
+                await ctx.send(f"Congratulations! `2` was the correct answer with {score2} upvotes. Image 1 " 
+                               f"only had {score1} upvotes.")
+            elif int(post1.score) > int(post2.score) and message.content == '2':
+                await ctx.send(f"Unfortunately, `2` was the incorrect answer. Image 1 had {score1} while Image 2 "
+                               f"had {score2} upvotes.")
+            elif int(post1.score) < int(post2.score) and message.content == '1':
+                await ctx.send(f"Unfortunately, `1` was the incorrect answer. Image 2 had {score2} while Image 1 "
+                               f"only had {score1} upvotes.")
+            else:
+                await ctx.send("You did not respond with `1` or `2` so the game was cancelled.")
+        except asyncio.TimeoutError:
+            await ctx.send("You never responded with a guess so the game was cancelled.")
+
 
 def setup(client):
-    client.add_cog(games(client))
+    client.add_cog(games(client, reddit=asyncpraw.Reddit(client_id=reddit_client_id,
+                                                         client_secret=reddit_client_secret,
+                                                         username=reddit_username,
+                                                         password=reddit_password,
+                                                         user_agent=reddit_user_agent)))

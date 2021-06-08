@@ -246,7 +246,7 @@ class fun(commands.Cog):
                 frame = Image.open(b)
                 frames.append(frame)
             frames.remove(frames[0])
-            frames[0].save('out.gif', save_all=True, append_images=frames[1:])
+            frames[0].save('out.gif', save_all=True, append_images=frames[1:], loop=0)
             await ctx.send(file=discord.File('out.gif'))
             await message.delete()
         except Exception:

@@ -291,5 +291,4 @@ def setup(client):
                                                      client_secret=reddit_client_secret,
                                                      username=reddit_username,
                                                      password=reddit_password,
-                                                     user_agent=reddit_user_agent
-                                                     )))
+                                                     user_agent=reddit_user_agent)))
