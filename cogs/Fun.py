@@ -207,7 +207,8 @@ class fun(commands.Cog):
             message2 = await ctx.send("💬 What will the bottom line say?")
             msg2 = await self.client.wait_for('message', timeout=60, check=lambda z: z.author == ctx.author)
             bottom_text = str(msg2.content).upper()
-            message = await ctx.send("Please wait while your meme is being created")
+            message = await ctx.send("<a:loading:743537226503421973> Please wait while your meme is being created"
+                                     "<a:loading:743537226503421973>")
             await message1.delete()
             await message2.delete()
 

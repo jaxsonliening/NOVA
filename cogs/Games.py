@@ -278,9 +278,11 @@ class games(commands.Cog):
 
     @commands.command(aliases=['ql'])
     async def quiplash(self, ctx):
-        """Play the popular jakcbox game quiplash (extreme help from nizcomix)"""
-        msg = await ctx.send('**QUIPLASH** - Send `join` into chat now to reserve a spot!')
+        """Play the popular jackbox game quiplash (extreme help from nizcomix)"""
         users = []
+        msg = await ctx.send('**QUIPLASH** - Send `join` into chat now to reserve a spot!')
+        msg2 = await ctx.send(f"{len(users)}/8")
+        await ctx.send(file=discord.File("/Users/jaxson/PycharmProjects/NOVABOT/quiplash.png"))
         local_quips = quiplash_questions
         with suppress(asyncio.TimeoutError):
             try:
@@ -293,11 +295,12 @@ class games(commands.Cog):
                         content = msg.content + f"\n➤ {app.author.display_name}"
                         users.append(app.author)
                         await msg.edit(content=content)
+                        await msg2.edit(content=f"{len(users)}/8")
                         if len(users) == 8:
                             break
                         continue
             finally:
-                await ctx.send("Starting the game, answer the prompt in your DMs")
+                linked_message = await ctx.send("Starting the game, answer the prompt in your DMs")
         quip = random.choice(local_quips)
         local_quips.remove(quip)
         for user in users:
@@ -315,8 +318,11 @@ class games(commands.Cog):
                         finals.append(msg.content)
                         answerers.append(msg.author)
                         await msg.add_reaction('<:tickgreen:732660186560462958>')
-                        await msg.author.send("Your response has been recorded! Check back in the original"
-                                              " channel to vote.")
+                        await msg.author.send(embed=discord.Embed(title=f"Your response has been recorded!\n"
+                                                                        f"Check back in the original"
+                                              f" channel to vote.", color=0x5643fd,
+                                              description=f"[<:share:730823872265584680> "
+                                                          f"Jump to message]({linked_message.jump_url})"))
                         if len(finals) == len(users):
                             break
                         continue
@@ -830,6 +836,8 @@ class games(commands.Cog):
             if subreddit not in subreddit_list:
                 return await ctx.send(f"That subreddit is not available for this game. "
                                       f"\nThe current available subreddits are `{listed}`.")
+            ms = await ctx.send("<a:loading:743537226503421973> Please wait while the game is loading... "
+                                "<a:loading:743537226503421973>")
             posts = []
             sub = await self.reddit.subreddit(subreddit, fetch=True)
             async for submission in sub.top("day", limit=50):
@@ -839,6 +847,7 @@ class games(commands.Cog):
             final_ids = random.sample(posts, 2)
             post1 = await self.reddit.submission(id=final_ids[0])
             post2 = await self.reddit.submission(id=final_ids[1])
+            await ms.delete()
             await ctx.send("Can you figure out which post got more upvotes? Look at each image and send "
                            "`1` or `2` in chat"
                            " to confirm your guess.")
@@ -852,17 +861,21 @@ class games(commands.Cog):
             score2 = "{:,}".format(post2.score)
             message = await self.client.wait_for('message', check=lambda x: x.author == ctx.message.author, timeout=60)
             if int(post1.score) > int(post2.score) and message.content == '1':
-                await ctx.send(f"Congratulations! `1` was the correct answer with {score1} upvotes. Image 2 "
-                               f"only had {score2} upvotes.")
+                await ctx.send(f"Congratulations! `1` was the correct answer with <:upvote:751314607808839803>"
+                               f" {score1} upvotes. Image 2 "
+                               f"only had <:upvote:751314607808839803> {score2} upvotes.")
             elif int(post1.score) < int(post2.score) and message.content == '2':
-                await ctx.send(f"Congratulations! `2` was the correct answer with {score2} upvotes. Image 1 " 
-                               f"only had {score1} upvotes.")
+                await ctx.send(f"Congratulations! `2` was the correct answer with <:upvote:751314607808839803> "
+                               f"{score2} upvotes. Image 1 " 
+                               f"only had <:upvote:751314607808839803> {score1} upvotes.")
             elif int(post1.score) > int(post2.score) and message.content == '2':
-                await ctx.send(f"Unfortunately, `2` was the incorrect answer. Image 1 had {score1} while Image 2 "
-                               f"had {score2} upvotes.")
+                await ctx.send(f"Unfortunately, `2` was the incorrect answer. Image 1 had <:upvote:751314607808839803>"
+                               f" {score1} upvotes "
+                               f"while Image 2 had <:upvote:751314607808839803> {score2} upvotes.")
             elif int(post1.score) < int(post2.score) and message.content == '1':
-                await ctx.send(f"Unfortunately, `1` was the incorrect answer. Image 2 had {score2} while Image 1 "
-                               f"only had {score1} upvotes.")
+                await ctx.send(f"Unfortunately, `1` was the incorrect answer. "
+                               f"Image 2 had <:upvote:751314607808839803> {score2} upvotes "
+                               f"while Image 1 only had <:upvote:751314607808839803> {score1} upvotes.")
             else:
                 await ctx.send("You did not respond with `1` or `2` so the game was cancelled.")
         except asyncio.TimeoutError:
