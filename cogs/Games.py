@@ -8,6 +8,7 @@ import re
 import akinator
 import time
 import asyncpraw
+import itertools
 from time import perf_counter
 from aiotrivia import TriviaClient, AiotriviaException
 from discord.ext import commands
@@ -282,7 +283,7 @@ class games(commands.Cog):
         users = []
         msg = await ctx.send('**QUIPLASH** - Send `join` into chat now to reserve a spot!')
         msg2 = await ctx.send(f"{len(users)}/8")
-        await ctx.send(file=discord.File("/Users/jaxson/PycharmProjects/NOVABOT/quiplash.png"))
+        await ctx.send(file=discord.File("/Users/jaxson/PycharmProjects/NOVABOT/images/quiplash.png"))
         local_quips = quiplash_questions
         with suppress(asyncio.TimeoutError):
             try:
@@ -320,9 +321,9 @@ class games(commands.Cog):
                         await msg.add_reaction('<:tickgreen:732660186560462958>')
                         await msg.author.send(embed=discord.Embed(title=f"Your response has been recorded!\n"
                                                                         f"Check back in the original"
-                                              f" channel to vote.", color=0x5643fd,
-                                              description=f"[<:share:730823872265584680> "
-                                                          f"Jump to message]({linked_message.jump_url})"))
+                                                                        f" channel to vote.", color=0x5643fd,
+                                                                  description=f"[<:share:730823872265584680> "
+                                                                              f"Jump to message]({linked_message.jump_url})"))
                         if len(finals) == len(users):
                             break
                         continue
@@ -351,61 +352,6 @@ class games(commands.Cog):
         user = answerers[int(winner[0]) - 1]
         return await ctx.send(f"Option {winner[0]} is the winner!\n`{quip}`\nWritten by "
                               f"<:owner:730864906429136907>**{user}**")
-
-    @commands.command(aliases=['hm', 'guessword', 'wordguess'])
-    async def hangman(self, ctx):
-        """The classic word guessing game, hangman."""
-        async with aiohttp.ClientSession() as cs:
-            async with cs.get("https://www.randomlists.com/data/words.json") as resp:
-                if resp.status != 200:
-                    return await ctx.send('<:RedX:707949835960975411> Could not pick a word.')
-                js = await resp.json()
-                index = random.choice(range(0, 2465))
-                word = js['data'][index]
-                print(word)
-                await ctx.send(f'Solve your word letter by letter or type out the full word into chat to complete.\n'
-                               f'Send the letter you want to guess into chat now!')
-                split_word = [str(x) for x in word]
-                blanks = []
-                tries = 7
-                correct = 0
-                for x in split_word:
-                    blanks.append('\_ ')
-                await ctx.send(f'You have **7** tries to start.')
-                try:
-                    while tries > 0:
-                        blank_strings = "".join(str(char) for char in blanks)
-                        await ctx.send(blank_strings)
-                        if correct == len(word):
-                            await ctx.send(f'<a:party:773063086109753365> '
-                                           f'**{word}** is correct.'
-                                           f'<a:party:773063086109753365>')
-                            break
-                        else:
-                            pass
-                        msg = await self.client.wait_for('message', timeout=60, check=lambda x: x.author == ctx.author)
-                        if msg.content == word:
-                            await ctx.send(f'<a:party:773063086109753365> '
-                                           f'**{word}** is correct.'
-                                           f'<a:party:773063086109753365>')
-                            break
-                        elif msg.content in split_word:
-                            await ctx.send('<:tickgreen:732660186560462958>')
-                            term_number = split_word.index(msg.content)
-                            if blanks[term_number] == '\_ ':
-                                blanks[term_number] = f"{msg.content} "
-                            correct += 1
-                            continue
-                        else:
-                            await ctx.send('<:redx:732660210132451369>')
-                            tries -= 1
-                            await ctx.send(f'You have **{tries}** tries left.')
-                            continue
-                    else:
-                        await ctx.send(f'You ran out of tries!\n'
-                                       f'The correct word was **{word}**')
-                except asyncio.TimeoutError:
-                    await ctx.send(f'You abandoned the game so the process was stopped. \nYour word was **{word}**.')
 
     @commands.command(aliases=['aki'])
     async def akinator(self, ctx):
@@ -768,7 +714,8 @@ class games(commands.Cog):
                                                  "ur duty to type back the "
                                                  "sentence as quick as possible with as few mistakes as possible.",
                         inline=False)
-        embed.add_field(name="Rules", value="Be warned: punctuation, capitalization, and spelling DO matter.", inline=False)
+        embed.add_field(name="Rules", value="Be warned: punctuation, capitalization, and spelling DO matter.",
+                        inline=False)
         await ctx.send(embed=embed)
         await asyncio.sleep(5)
         await ctx.send("**3...**")
@@ -793,7 +740,7 @@ class games(commands.Cog):
                         correct += 1
                 except IndexError:
                     pass
-            accuracy = correct/len(characters) * 100
+            accuracy = correct / len(characters) * 100
             stop = perf_counter()
             total = round(stop - start)
             part_of_minute = total / 60
@@ -866,7 +813,7 @@ class games(commands.Cog):
                                f"only had <:upvote:751314607808839803> {score2} upvotes.")
             elif int(post1.score) < int(post2.score) and message.content == '2':
                 await ctx.send(f"Congratulations! `2` was the correct answer with <:upvote:751314607808839803> "
-                               f"{score2} upvotes. Image 1 " 
+                               f"{score2} upvotes. Image 1 "
                                f"only had <:upvote:751314607808839803> {score1} upvotes.")
             elif int(post1.score) > int(post2.score) and message.content == '2':
                 await ctx.send(f"Unfortunately, `2` was the incorrect answer. Image 1 had <:upvote:751314607808839803>"
@@ -880,6 +827,92 @@ class games(commands.Cog):
                 await ctx.send("You did not respond with `1` or `2` so the game was cancelled.")
         except asyncio.TimeoutError:
             await ctx.send("You never responded with a guess so the game was cancelled.")
+
+    @commands.command(aliases=['reaction_test', 'react'])
+    async def reaction(self, ctx):
+        embed = discord.Embed(description="Wait for the picture to turn green, then react with "
+                                          "<:releases:738453708139921479>"
+                                          " to test your reaction speed.", color=0xFF0000,
+                              timestamp=ctx.message.created_at,
+                              title="Reaction Time Test")
+        embed.set_image(url="https://imgur.com/dhnhar1.jpg")
+        msg = await ctx.send(embed=embed)
+        await msg.add_reaction("<:releases:738453708139921479>")
+        sleep_time = float(random.choice(range(25, 70)) / 10)
+        await asyncio.sleep(sleep_time)
+        embed1 = discord.Embed(title="GO!", timestamp=ctx.message.created_at, color=0x00FF00)
+        embed1.set_image(url="https://imgur.com/FMtVCa3.png")
+        await msg.edit(embed=embed1)
+        try:
+            start = perf_counter()
+            await self.client.wait_for("reaction_add", check=lambda reaction, user: str(
+                reaction.emoji) == "<:releases:738453708139921479>"
+                                                                                    and user.id == ctx.author.id,
+                                       timeout=60)
+            stop = perf_counter()
+            total = round(stop - start, 3) * 1000
+            embed2 = discord.Embed(description=f"Nice Job! You reacted in `{int(total)}ms`.", color=0x5643fd,
+                                   timestamp=ctx.message.created_at,
+                                   title="Reaction Time Test")
+            await msg.edit(embed=embed2)
+        except asyncio.TimeoutError:
+            await msg.delete()
+            await ctx.send("You took too long to react so the process was abandoned.", embed=None)
+
+    @commands.command(aliases=['captiongame', 'gifgame', 'gif', 'caption'])
+    async def captionary(self, ctx):
+        """A fun game based on captioning different gifs."""
+        game_master = ctx.message.author.id
+        random.shuffle(gif_links)
+        random.shuffle(inspiration)
+        gifs = gif_links[:20]
+        embed = discord.Embed(title="Captionary", color=0x5643fd, timestamp=ctx.message.created_at,
+                              description="Captionary consists of 20 rounds, each lasting 2 minutes. A random "
+                                          "gif will be sent and players will create their own captions that will be "
+                                          "voted on. At the end of the 20 rounds, the player with the most total "
+                                          "votes wins!")
+        embed.add_field(name='**Commands**',
+                        value='➤ `!cap` or `caption` - submit your caption\n'
+                              '➤ `!inspire` - get a free caption idea\n'
+                              '➤ `!stop` - used by the game master to end the game', inline=False)
+        embed.add_field(name='**Game Master**',
+                        value=f'{ctx.message.author.mention} is the game master for this match! '
+                              f'This user holds the power to end the game at any time using the `!stop` command.')
+        embed.set_image(url='https://imgur.com/qUPbXKI.jpg')
+        await ctx.send(embed=embed)
+        await asyncio.sleep(2)
+        await ctx.send("Get Ready! The game will start in **15 seconds**.")
+        await asyncio.sleep(15)
+        rounds = 1
+        gif_index = 0
+        players = []
+        while rounds < 21:
+            await ctx.send(f"**ROUND {rounds}/20**")
+            await ctx.send(gifs[gif_index])
+            if rounds == 1:
+                pass
+            else:
+                await ctx.send(" ".join(player.mention for player in players))
+            # make a timer loop around this code
+            msg = await self.client.wait_for("message", check=lambda m: m.author != ctx.bot, timeout=120)
+            answered = []
+            if "!cap" in msg.content:
+                if msg.author in answered:
+                    await ctx.send("You've already given a caption for this round!")
+                else:
+                    answered.append(msg.author)
+                if msg.author not in players:
+                    players.append(msg.author)
+                await msg.add_reaction("<:upvote:751314607808839803>")
+            elif "!inspire" in msg.content:
+                await ctx.send(random.choice(inspiration))
+            elif "!stop" == msg.content and msg.author.id == game_master:
+                return await ctx.send("Thanks for playing, this game has ended!")
+            else:
+                pass
+            # end loop here
+            rounds += 1
+            gif_index += 1
 
 
 def setup(client):

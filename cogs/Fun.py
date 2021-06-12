@@ -194,7 +194,7 @@ class fun(commands.Cog):
         try:
             # defining variables
 
-            im = Image.open('/Users/jaxson/PycharmProjects/NOVABOT/1984.gif')
+            im = Image.open('/Users/jaxson/PycharmProjects/NOVABOT/images/1984.gif')
             image_width, image_height = im.size
             font = ImageFont.truetype(font='/Users/jaxson/downloads/Impact-Font/unicode.impact.ttf',
                                       size=int(image_height/10))
