@@ -136,51 +136,6 @@ class fun(commands.Cog):
                                 'Pool-Transparent-PNG.png')
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=["bigemote"])
-    async def bigmote(self, ctx, *emoji: discord.Emoji):
-        """Emotes, but B I G (only works from the bot's cache)"""
-        a = []
-        y = ""
-        for item in emoji:
-            a.append(self.client.get_emoji(item.id))
-        emote = a[0]
-        x = emote.id
-        if emote.animated is True:
-            y += 'gif'
-        else:
-            y += 'png'
-        await ctx.send(f"https://cdn.discordapp.com/emojis/{x}.{y}")
-
-    @commands.command(aliases=['dankvid', 'video'])
-    async def dankvideo(self, ctx):
-        """Randomly generate a funny video."""
-        m = random.choice(dank_links)
-        await ctx.send(f"Video **{dank_links.index(m) + 1}** of **{len(dank_links)}**\n{m}")
-
-    # credit some random github page https://github.com/calebj/calebj-cogs/blob/master/zalgo/zalgo.py
-    @commands.command()
-    async def zalgo(self, ctx, *, text: str):
-        """Make your text look like it came from the scary side of town."""
-        fw = text.split()[0]
-        try:
-            amount = min(int(fw), ZALGO_MAX_AMT)
-            text = text[len(fw):].strip()
-        except ValueError:
-            amount = ZALGO_DEFAULT_AMT
-        text = self.zalgoify(text.upper(), amount)
-        await ctx.send(text)
-
-    def zalgoify(self, text, amount=3):
-        zalgo_text = ''
-        for c in text:
-            zalgo_text += c
-            if c != ' ':
-                for t, range in ZALGO_PARAMS.items():
-                    range = (round(x * amount / 5) for x in range)
-                    n = min(randint(*range), len(ZALGO_CHARS[t]))
-                    zalgo_text += ''.join(sample(ZALGO_CHARS[t], n))
-        return zalgo_text
-
     @commands.command()
     async def topic(self, ctx):
         """Send a random topic into chat to jump-start a conversation."""

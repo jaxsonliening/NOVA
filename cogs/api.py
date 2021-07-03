@@ -189,25 +189,6 @@ class api(commands.Cog):
                 await ctx.send(embed=embed)
 
     @commands.command()
-    async def lyrics(self, ctx, *, song):
-        """Find song lyrics."""
-        url = f'https://some-random-api.ml/lyrics?title={song}'
-        async with aiohttp.ClientSession() as cs, ctx.typing():
-            async with cs.get(url) as resp:
-                if resp.status != 200:
-                    return await ctx.send("<:redx:732660210132451369> Could not find any lyrics for that song.")
-                js = await resp.json()
-                thumbnail = js['thumbnail']
-                links = js['links']
-                embed = discord.Embed(title=js['title'], color=0x5643fd, timestamp=ctx.message.created_at,
-                                      description=f"*[Find the full lyrics on genius.com"
-                                                  f"]({links['genius']})*\n\n{js['lyrics'][:1000]}")
-                embed.set_thumbnail(url=thumbnail['genius'])
-                embed.set_author(name=f"By: {js['author']}")
-
-                await ctx.send(embed=embed)
-
-    @commands.command()
     async def news(self, ctx, result: int = 0):
         """Show the top headlines in the U.S. for today. Enter a number (0-15) to show a certain result. """
         url = f'https://newsapi.org/v2/top-headlines?country=us&apiKey={news_key}'
@@ -368,62 +349,6 @@ class api(commands.Cog):
                                           timestamp=ctx.message.created_at)
                     await ctx.send(embed=embed)
 
-    @commands.command()
-    async def bitcoin(self, ctx):
-        """Find data on current bitcoin prices."""
-        async with aiohttp.ClientSession() as cs, ctx.typing():
-            async with cs.get(f"https://api.coindesk.com/v1/bpi/currentprice.json") as resp:
-                if resp.status != 200:
-                    return await ctx.send('<:RedX:707949835960975411> No bitcoin data could be gathered.')
-                else:
-                    js = await resp.json(content_type='application/javascript')
-                    embed = discord.Embed(title="Bitcoin Price", color=0x5643fd, timestamp=ctx.message.created_at,
-                                          description=f"**USD** - United States Dollar\n"
-                                                      f"${js['bpi']['USD']['rate']}\n\n"
-                                                      f"**GBP** - British Pound Sterling\n"
-                                                      f"£{js['bpi']['GBP']['rate']}\n\n"
-                                                      f"**EUR** - Euro\n"
-                                                      f"€{js['bpi']['EUR']['rate']}")
-                    embed.add_field(name="Disclaimer", value="This data was produced from the "
-                                                             "CoinDesk Bitcoin Price Index "
-                                                             "(USD). Non-USD currency data converted using hourly "
-                                                             "conversion"
-                                                             " rate from https://openexchangerates.org", inline=True)
-                    embed.set_thumbnail(url="https://imgur.com/JbpNY69.jpg")
-                    await ctx.send(embed=embed)
-
-    @commands.command()
-    async def image(self, ctx, *, search):
-        """Find an image based off of a search.."""
-        async with aiohttp.ClientSession() as cs, ctx.typing():
-            async with cs.get(f"https://pixabay.com/api/?key="
-                              f"{pixaby}&q={search}&image_type=all&safesearch=true") as resp:
-                if resp.status != 200:
-                    return await ctx.send('<:RedX:707949835960975411> No images could be found.')
-                else:
-                    try:
-                        js = await resp.json()
-                        maximum = len(js['hits'])
-                        number_list = []
-                        for i in range(0, maximum):
-                            number_list.append(i)
-                        index = random.choice(number_list)
-                        top_result = js['hits'][index]
-                        embed = discord.Embed(title=f"Result {index + 1} of {maximum}", color=0x5643fd,
-                                              timestamp=ctx.message.created_at,
-                                              description=f"**Image Type:** {top_result['type'].capitalize()}\n"
-                                                          f"**Image Tags:** {top_result['tags']}\n"
-                                                          f"**Dimensions:** {top_result['imageWidth']} by "
-                                                          f"{top_result['imageHeight']}\n"
-                                                          f"**Views/Likes/Comments/Downloads:** {top_result['views']}/"
-                                                          f"{top_result['likes']}/{top_result['comments']}/"
-                                                          f"{top_result['downloads']}\n"
-                                                          f"**Website Link:** {top_result['pageURL']}")
-                        embed.set_image(url=top_result['largeImageURL'])
-                        await ctx.send(embed=embed)
-                    except IndexError:
-                        await ctx.send('<:RedX:707949835960975411> No images could be found.\n'
-                                       'Try again with different search terms.')
 
 
 def setup(client):
